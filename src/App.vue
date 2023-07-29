@@ -12,11 +12,12 @@ import {
 } from 'openai'
 
 import axios, { type AxiosResponse } from 'axios'
+import debounce from 'lodash/debounce'
 
 import CSettings from './components/CSettings.vue'
 import CToast from './components/CToast.vue'
 import CButton from './components/CButton.vue'
-import { computed, onUpdated, ref } from 'vue'
+import { ComputedRef, computed, onUpdated, ref, watch } from 'vue'
 import { useChatGPTSetting } from './store'
 import useLoading from './hooks/useLoading'
 
@@ -146,6 +147,40 @@ const openSettings = (): void => {
 
 const userMessage = ref('')
 const userMessages = ref<ChatCompletionResponseMessage[]>([])
+const userMessagesTokenLength = ref(0)
+
+const systemMessage: ComputedRef<ChatCompletionResponseMessage[]> = computed(
+  () => {
+    return store.system !== ''
+      ? [{ role: 'system', content: store.system }]
+      : []
+  }
+)
+
+const { isLoading: isLoadingTokensLength, call: getTokensLength } = useLoading(
+  async (): Promise<void> => {
+    const result: AxiosResponse<{ tokens: number }> = await axios.post(
+      '/api/chat/tokens',
+      [
+        ...systemMessage.value,
+        ...userMessages.value,
+        {
+          role: 'user',
+          content: userMessage.value
+        }
+      ]
+    )
+
+    userMessagesTokenLength.value = result.data.tokens
+  }
+)
+
+watch(
+  () => [...systemMessage.value, ...userMessages.value, userMessage.value],
+  debounce(async () => {
+    await getTokensLength()
+  }, 100)
+)
 
 // reversed to show latest message at the bottom
 const reversedUserMessages = computed(() =>
@@ -164,11 +199,8 @@ const send = async (isResend = false): Promise<void> => {
     userMessage.value = ''
   }
 
-  const systemMessage: ChatCompletionResponseMessage[] =
-    store.system !== '' ? [{ role: 'system', content: store.system }] : []
-
   const messages: ChatCompletionResponseMessage[] = [
-    ...systemMessage,
+    ...systemMessage.value,
     ...userMessages.value
   ]
 
@@ -283,6 +315,17 @@ const resend = async (): Promise<void> => {
             v-model="userMessage"
             class="w-full max-h-[100px] rounded-md border border-blue-100 outline-blue-200 px-3 py-2 resize-none"
           ></textarea>
+          <div>
+            <span class="text-xs text-gray-400"
+              >Press Ctrl + Enter to send.</span
+            >&nbsp;
+            <span v-if="isLoadingTokensLength" class="text-xs text-gray-400">
+              Calculating tokens length...
+            </span>
+            <span class="text-xs text-gray-400"
+              >Current tokens length: {{ userMessagesTokenLength }}</span
+            >
+          </div>
         </div>
         <c-button
           :disabled="isLoading"
