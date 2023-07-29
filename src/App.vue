@@ -17,7 +17,7 @@ import debounce from 'lodash/debounce'
 import CSettings from './components/CSettings.vue'
 import CToast from './components/CToast.vue'
 import CButton from './components/CButton.vue'
-import { ComputedRef, computed, onUpdated, ref, watch } from 'vue'
+import { type ComputedRef, computed, onUpdated, ref, watch } from 'vue'
 import { useChatGPTSetting } from './store'
 import useLoading from './hooks/useLoading'
 
