@@ -4,12 +4,12 @@ This is a ChatGPT-like website built with Vue 3 and Express.js. The project util
 
 ## Getting Started
 
-To get started with the ChatGPT Client, follow the instructions below.
+To get started with the Oshaberi ChatGPT Client, follow the instructions below.
 
 ### Prerequisites
 
-- Node.js (version >= 12.x)
-- Yarn (version >= 1.x)
+- Node.js (version >= 18.x)
+- Yarn (version >= 2)
 
 ### Installation
 
@@ -45,6 +45,8 @@ yarn dev
 ```
 
 2. Access the ChatGPT client website by navigating to `http://localhost:3000` in your web browser.
+
+3. To build the project, run `yarn build`. Then you can run `yarn start` to start the production server.
 
 ## Contributing
 
