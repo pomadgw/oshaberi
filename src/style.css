@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.marked p,
+.marked pre,
+.code-highlight,
+.marked li {
+  @apply mb-2 last:mb-0;
+}
+
+/* hljs */
+.code-highlight {
+  @apply p-3 border border-blue-200 rounded-md flex flex-col gap-2;
+}
+
+.hljs-keyword {
+  @apply text-blue-600 font-bold;
+}
+
+.hljs-tag {
+  @apply text-gray-600;
+}
+
+.hljs-title {
+  @apply text-blue-900;
+}
+
+.hljs-name {
+  @apply text-blue-600;
+}
+
+.hljs-attr {
+  @apply text-purple-600;
+}
+
+.hljs-string {
+  @apply text-green-600;
+}
+
+.hljs-comment,
+.hljs-quote,
+.hljs-deletion,
+.hljs-meta {
+  @apply text-gray-500 italic;
+}

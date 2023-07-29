@@ -1,0 +1,22 @@
+diff --git a/index.d.ts b/index.d.ts
+index 88820d0493122d9ba0129fba1752bb9e98532311..b7dea6309b05e1ed07fbc7d42878c208ca614c76 100755
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -72,7 +72,7 @@ export interface RequestHandler<
+         req: Request<P, ResBody, ReqBody, ReqQuery, LocalsObj>,
+         res: Response<ResBody, LocalsObj>,
+         next: NextFunction,
+-    ): void;
++    ): void | Promise<void>;
+ }
+ 
+ export type ErrorRequestHandler<
+@@ -86,7 +86,7 @@ export type ErrorRequestHandler<
+     req: Request<P, ResBody, ReqBody, ReqQuery, LocalsObj>,
+     res: Response<ResBody, LocalsObj>,
+     next: NextFunction,
+-) => void;
++) => void | Promise<void>;
+ 
+ export type PathParams = string | RegExp | Array<string | RegExp>;
+ 
