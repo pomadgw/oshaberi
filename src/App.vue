@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import { marked } from 'marked'
-import DOMPurify from 'dompurify'
-import { gfmHeadingId } from 'marked-gfm-heading-id'
-import { markedHighlight } from 'marked-highlight'
-import hljs from 'highlight.js'
-
 import {
   type CreateChatCompletionResponse,
   type ChatCompletionResponseMessage,
@@ -17,7 +11,8 @@ import debounce from 'lodash/debounce'
 import CSettings from './components/CSettings.vue'
 import CToast from './components/CToast.vue'
 import CButton from './components/CButton.vue'
-import { type ComputedRef, computed, onUpdated, ref, watch } from 'vue'
+import ChatBubble from './components/ChatBubble.vue'
+import { type ComputedRef, computed, ref, watch } from 'vue'
 import { useChatGPTSetting } from './store'
 import useLoading from './hooks/useLoading'
 
@@ -25,119 +20,6 @@ const store = useChatGPTSetting()
 
 const isToastOpen = ref(false)
 const toastText = ref('')
-
-async function copyToClipboard(text: string): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(text)
-    toastText.value = 'Content copied to clipboard'
-    isToastOpen.value = true
-  } catch (err) {
-    console.error('Failed to copy: ', err)
-  }
-}
-
-marked.use(gfmHeadingId())
-marked.use(
-  markedHighlight({
-    langPrefix: 'hljs language-',
-    highlight(code, lang) {
-      const language = hljs.getLanguage(lang) != null ? lang : 'plaintext'
-
-      return `
-<pre class="hidden source-code" data-language="${language}">${encodeURIComponent(
-        code
-      )}</pre>
-${hljs.highlight(code, { language }).value}
-`.trim()
-    }
-  })
-)
-
-const purifier = DOMPurify()
-
-marked.use({
-  hooks: {
-    postprocess(html) {
-      const shadowDOM = document.createElement('div')
-      shadowDOM.innerHTML = purifier.sanitize(html)
-
-      for (const pre of shadowDOM.querySelectorAll('.hljs')) {
-        // find element with source-code class
-        const sourceCode = pre.querySelector('.source-code') as HTMLElement
-
-        let code = ''
-        let language = ''
-
-        if (sourceCode != null) {
-          code = sourceCode.innerHTML
-          language = sourceCode.dataset.language ?? 'plaintext'
-
-          pre.removeChild(sourceCode)
-        }
-
-        pre.innerHTML = pre.innerHTML.trim()
-
-        const parent = pre.parentElement
-        const grandparent = parent?.parentElement
-
-        if (parent != null) {
-          // wrap it in a div
-          const div = document.createElement('div')
-
-          div.innerHTML = `
-<div class="code-highlight">
-  <p class="text-sm text-gray-600 border-b pb-3 px-3 -mx-3">Language: ${language}</p>
-    <pre class="overflow-auto w-full">
-${pre.innerHTML}
-    </pre>
-  <div class="flex gap-2 items-center border-t pt-3 px-3 -mx-3">
-    <div class="flex-1">
-      <p class="text-sm text-gray-600">Use the code with caution.</p>
-    </div>
-    <button class="text-sm">
-      Copy
-    </button>
-  </div>
-</div>
-          `.trim()
-
-          const button = div.querySelector('button')
-          if (button != null) {
-            button.dataset.clipboardText = decodeURIComponent(code)
-          }
-
-          if (div.firstChild != null)
-            grandparent?.replaceChild(div.firstChild, parent)
-        }
-      }
-
-      for (const source of shadowDOM.querySelectorAll('.source-code')) {
-        const sourceParent = source.parentElement
-        // remove source
-        if (sourceParent != null) {
-          sourceParent.removeChild(source)
-          sourceParent.innerHTML = sourceParent.innerHTML.trim()
-        }
-      }
-
-      return shadowDOM.innerHTML
-    }
-  }
-})
-
-onUpdated(() => {
-  const buttons = document.querySelectorAll('button[data-clipboard-text]')
-
-  for (const button of buttons) {
-    button.addEventListener('click', () => {
-      copyToClipboard(
-        (button as HTMLElement).dataset.clipboardText ?? ''
-      ).catch((err) => {
-        console.error(err)
-      })
-    })
-  }
-})
 
 const dialogOpen = ref(false)
 
@@ -148,6 +30,11 @@ const openSettings = (): void => {
 const userMessage = ref('')
 const userMessages = ref<ChatCompletionResponseMessage[]>([])
 const userMessagesTokenLength = ref(0)
+
+const onSuccessCopy = (): void => {
+  toastText.value = 'Copied!'
+  isToastOpen.value = true
+}
 
 const systemMessage: ComputedRef<ChatCompletionResponseMessage[]> = computed(
   () => {
@@ -237,12 +124,12 @@ const send = async (isResend = false): Promise<void> => {
     ]
   } catch (err) {
     console.error(err)
-    toastText.value = 'Failed to send message'
+    toastText.value = `Failed to send message: ${(err as Error).toString()}`
     isToastOpen.value = true
   }
 }
 
-const { isLoading, call: sendChat } = useLoading(send)
+const { isLoading: isChatLoading, call: sendChat } = useLoading(send)
 
 const resend = async (): Promise<void> => {
   // remove last element
@@ -268,41 +155,18 @@ const resend = async (): Promise<void> => {
       >
         <div>
           <c-button
-            :disabled="isLoading || userMessages.length === 0"
-            :is-loading="isLoading"
+            :disabled="isChatLoading || userMessages.length === 0"
+            :is-loading="isChatLoading"
             @click="resend"
             >Resend</c-button
           >
         </div>
-        <div
+        <ChatBubble
           v-for="(msg, index) in reversedUserMessages"
           :key="index"
-          class="flex flex-col items-start gap-1"
-        >
-          <div
-            :class="{ 'self-end': msg.role === 'assistant' }"
-            class="flex items-center gap-2"
-          >
-            <div class="text-sm text-gray-600 flex-1">
-              {{ msg.role }}
-            </div>
-            <button
-              class="text-xs text-blue-400"
-              @click="copyToClipboard(msg.content ?? '')"
-            >
-              Copy this content
-            </button>
-          </div>
-          <div
-            :class="{
-              'self-end': msg.role === 'assistant',
-              'border-blue-300': msg.role === 'user',
-              'border-yellow-300': msg.role === 'assistant'
-            }"
-            class="border-2 rounded-md p-4 marked max-w-full overflow-x-auto"
-            v-html="marked.parse(msg.content ?? '')"
-          ></div>
-        </div>
+          :chat="msg"
+          @success="onSuccessCopy"
+        />
       </div>
       <div class="flex-1 flex gap-4">
         <div
@@ -311,7 +175,7 @@ const resend = async (): Promise<void> => {
           @keyup="
             (e) => {
               if (e.key === 'Enter' && e.getModifierState('Control')) {
-                send()
+                sendChat()
                 return
               }
             }
@@ -334,8 +198,8 @@ const resend = async (): Promise<void> => {
           </div>
         </div>
         <c-button
-          :disabled="isLoading"
-          :is-loading="isLoading"
+          :disabled="isChatLoading"
+          :is-loading="isChatLoading"
           @click="sendChat"
           >Send</c-button
         >

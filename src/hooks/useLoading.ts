@@ -17,7 +17,10 @@ export default function useLoading<F extends PromiseFunction<any>>(
     try {
       isLoading.value = true
       // eslint-disable-next-line n/no-callback-literal
-      return await callback(...args)
+      const result = await callback(...args)
+      isLoading.value = false
+
+      return result
     } finally {
       isLoading.value = false
     }
