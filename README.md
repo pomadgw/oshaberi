@@ -1,18 +1,67 @@
-# Vue 3 + TypeScript + Vite
+# ChatGPT Client
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This is a ChatGPT-like website built with Vue 3 and Express.js. The project utilizes Vite for the front-end and Express.js for the server-side.
 
-## Recommended IDE Setup
+## Getting Started
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+To get started with the ChatGPT Client, follow the instructions below.
 
-## Type Support For `.vue` Imports in TS
+### Prerequisites
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+- Node.js (version >= 12.x)
+- Yarn (version >= 1.x)
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+### Installation
 
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/chatgpt-client.git
+cd chatgpt-client
+```
+
+2. Install the dependencies:
+
+```bash
+yarn install
+```
+
+3. Set up environment variables:
+
+Copy the `.env.sample` file to `.env`:
+
+```bash
+cp .env.sample .env
+```
+
+Edit the `.env` file and provide the required values for the environment variables, including the OpenAI API key, server hostname, and port.
+
+### Usage
+
+1. Start the front-end development server:
+
+```bash
+yarn dev
+```
+
+2. Start the back-end server:
+
+```bash
+yarn server
+```
+
+3. Access the ChatGPT client website by navigating to `http://localhost:3000` in your web browser.
+
+## Contributing
+
+Contributions are welcome! If you find any bugs or have suggestions for improvement, please create a new issue on the GitHub repository.
+
+1. Fork the project repository.
+2. Create your feature branch: `git checkout -b feature-name`.
+3. Commit your changes: `git commit -m 'Add some feature'`.
+4. Push to the branch: `git push origin feature-name`.
+5. Submit a pull request.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
