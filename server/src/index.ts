@@ -8,7 +8,8 @@ import homeRouters from './home.js'
 import assetsRouters from './assets.js'
 import chatRouters from './chatgpt.js'
 
-const port = process.env.PORT ?? 3000
+const port = Number(process.env.PORT ?? 3000)
+const hostname = process.env.HOSTNAME ?? 'localhost'
 const publicPath = path.join(path.resolve(), 'public')
 const distPath = path.join(path.resolve(), 'dist')
 
@@ -49,6 +50,6 @@ app.use('/api/chat', chatRouters)
 
 app.use(homeRouters)
 
-app.listen(port, () => {
+app.listen(port, hostname, () => {
   console.log('Server listening on port', port)
 })

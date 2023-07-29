@@ -5,9 +5,13 @@ import path from 'path'
 const router = express.Router()
 const environment = process.env.NODE_ENV
 
-router.get('/(.*)', async (_req, res) => {
+router.get('/(.*)', async (req, res) => {
+  // get hostname of request
+  const hostname = req.hostname
+
   const data = {
     environment,
+    hostname,
     manifest: await parseManifest()
   }
 
