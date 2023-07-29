@@ -1,4 +1,4 @@
-# ChatGPT Client
+# Oshaberi
 
 This is a ChatGPT-like website built with Vue 3 and Express.js. The project utilizes Vite for the front-end and Express.js for the server-side.
 
@@ -16,8 +16,8 @@ To get started with the ChatGPT Client, follow the instructions below.
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/chatgpt-client.git
-cd chatgpt-client
+git clone https://github.com/pomadgw/oshaberi.git
+cd oshaberi
 ```
 
 2. Install the dependencies:
