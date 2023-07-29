@@ -157,6 +157,11 @@ const systemMessage: ComputedRef<ChatCompletionResponseMessage[]> = computed(
   }
 )
 
+const clearChat = (): void => {
+  userMessages.value = []
+  userMessage.value = ''
+}
+
 const { isLoading: isLoadingTokensLength, call: getTokensLength } = useLoading(
   async (): Promise<void> => {
     const result: AxiosResponse<{ tokens: number }> = await axios.post(
@@ -252,8 +257,9 @@ const resend = async (): Promise<void> => {
 
   <CToast v-model:open="isToastOpen" :text="toastText" />
   <div class="max-w-7xl p-8 m-auto flex flex-col h-screen">
-    <div>
+    <div class="flex gap-3">
       <c-button @click="openSettings">Open Settings</c-button>
+      <c-button @click="clearChat">Clear Chat</c-button>
     </div>
     <div class="flex flex-col py-6">
       <div
