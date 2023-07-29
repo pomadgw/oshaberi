@@ -13,7 +13,7 @@ const emit = defineEmits<(e: 'click') => void>()
       '!bg-blue-300': props.disabled,
       '!cursor-wait': props.isLoading
     }"
-    class="bg-blue-500 text-white rounded-md py-3 px-6"
+    class="bg-blue-500 text-white rounded-md py-3 px-6 max-h-16"
     @click="emit('click')"
   >
     <slot />
