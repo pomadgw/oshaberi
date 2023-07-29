@@ -38,19 +38,13 @@ Edit the `.env` file and provide the required values for the environment variabl
 
 ### Usage
 
-1. Start the front-end development server:
+1. Start the development server:
 
 ```bash
 yarn dev
 ```
 
-2. Start the back-end server:
-
-```bash
-yarn server
-```
-
-3. Access the ChatGPT client website by navigating to `http://localhost:3000` in your web browser.
+2. Access the ChatGPT client website by navigating to `http://localhost:3000` in your web browser.
 
 ## Contributing
 
