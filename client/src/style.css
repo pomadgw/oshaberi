@@ -4,6 +4,9 @@
 
 .marked p,
 .marked pre,
+.marked ol,
+.marked ul,
+.marked blockquote,
 .code-highlight,
 .marked li {
   @apply mb-2 last:mb-0;
