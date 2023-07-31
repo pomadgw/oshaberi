@@ -165,8 +165,10 @@ const send = async (isResend = false): Promise<void> => {
 const { isLoading: isChatLoading, call: sendChat } = useLoading(send)
 
 const resend = async (): Promise<void> => {
-  // remove last element
-  userMessages.value = userMessages.value.slice(0, -1)
+  // remove last element if it's assitant message
+  if (userMessages.value[userMessages.value.length - 1].role === 'assistant') {
+    userMessages.value = userMessages.value.slice(0, -1)
+  }
 
   await sendChat(true)
 }
