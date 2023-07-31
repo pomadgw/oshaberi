@@ -1,7 +1,6 @@
 {
   "env": {
     "browser": true,
-    "node": true,
     "es2021": true
   },
   "extends": [
@@ -15,13 +14,12 @@
     "parser": "@typescript-eslint/parser",
     "ecmaVersion": "latest",
     "sourceType": "module",
-    "project": ["./client/tsconfig.json", "./server/tsconfig.json"],
+    "project": "./tsconfig.json",
     "extraFileExtensions": [".vue"]
   },
   "parser": "vue-eslint-parser",
   "plugins": ["vue", "prettier"],
   "rules": {
     "prettier/prettier": "error"
-  },
-  "ignorePatterns": ["dist", "dist-server", "node_modules"]
+  }
 }
