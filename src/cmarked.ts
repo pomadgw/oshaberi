@@ -9,7 +9,7 @@ marked.use({
     code(code, lang = 'plaintext'): string {
       // we want to put the code into an HTML attribute.
       // we need to escape the code first.
-      const copiedCode = code.replace(/"/g, '\\"')
+      const copiedCode = code.replace(/"/g, '&quot;')
 
       const language = hljs.getLanguage(lang) != null ? lang : 'plaintext'
       return `
