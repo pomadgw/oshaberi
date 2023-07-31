@@ -225,7 +225,7 @@ const resend = async (): Promise<void> => {
             <span v-if="isLoadingTokensLength" class="text-xs text-gray-400">
               Calculating tokens length...
             </span>
-            <span class="text-xs text-gray-400"
+            <span v-else class="text-xs text-gray-400"
               >Current tokens length: {{ userMessagesTokenLength }}</span
             >
           </div>
