@@ -1520,6 +1520,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cargo-cp-artifact@npm:^0.1":
+  version: 0.1.8
+  resolution: "cargo-cp-artifact@npm:0.1.8"
+  bin:
+    cargo-cp-artifact: bin/cargo-cp-artifact.js
+  checksum: 06e774dbf032c79ef9d84d08dc6dc1e8842008b784098faa53f9e320acb930ac3898296e4af1d33cb11557bed9b8324c118d20ad6492ea7291cf92da641b6cb1
+  languageName: node
+  linkType: hard
+
 "chalk@npm:^4.0.0, chalk@npm:^4.0.2, chalk@npm:^4.1.2":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
@@ -3644,6 +3653,14 @@ __metadata:
   checksum: 0c37f9f7fa212b38912b7145e1cd16a5f3cd34d782441c3e6ca653485d326f58b3caccda66efce1c5812bde4961bbde3374fae4b0d11bf1226152337f3894aa5
   languageName: node
   linkType: hard
+
+"lingua-nodejs@workspace:lingua-nodejs":
+  version: 0.0.0-use.local
+  resolution: "lingua-nodejs@workspace:lingua-nodejs"
+  dependencies:
+    cargo-cp-artifact: ^0.1
+  languageName: unknown
+  linkType: soft
 
 "locate-path@npm:^6.0.0":
   version: 6.0.0

@@ -26,6 +26,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "server/**/*.ts",
+    "lingua-nodejs/index.d.ts",
     "vite.config.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]

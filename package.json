@@ -14,6 +14,9 @@
     "start": "NODE_ENV=production node dist-server/index.js",
     "preview": "vite preview"
   },
+  "workspaces": [
+    "lingua-nodejs"
+  ],
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
     "axios": "^1.4.0",

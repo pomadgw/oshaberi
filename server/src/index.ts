@@ -4,12 +4,12 @@ import express from 'express'
 import path from 'path'
 import cors from 'cors'
 
-import { franc } from 'franc'
+// import { franc } from 'franc'
+import lingua from 'lingua-nodejs'
 
 import homeRouters from './home.js'
 import assetsRouters from './assets.js'
 import chatRouters from './chatgpt.js'
-import { iso6393To1 } from 'iso-639-3'
 
 const port = Number(process.env.PORT ?? 3000)
 const hostname = process.env.HOSTNAME ?? 'localhost'
@@ -53,7 +53,7 @@ app.use('/api/chat', chatRouters)
 
 app.post('/api/language', (req, res) => {
   const { text } = req.body
-  const language = iso6393To1[franc(text)]
+  const language = lingua.detectLanguage(text)
 
   res.json({ language })
 })
