@@ -16,6 +16,8 @@ import { type ComputedRef, computed, ref, watch } from 'vue'
 import { useChatGPTSetting } from './store'
 import useLoading from './hooks/useLoading'
 
+import clipboardEvent from './clipboard'
+
 const store = useChatGPTSetting()
 
 const isToastOpen = ref(false)
@@ -35,6 +37,8 @@ const onSuccessCopy = (): void => {
   toastText.value = 'Copied!'
   isToastOpen.value = true
 }
+
+clipboardEvent.on('success', onSuccessCopy)
 
 const systemMessage: ComputedRef<ChatCompletionResponseMessage[]> = computed(
   () => {
@@ -165,7 +169,6 @@ const resend = async (): Promise<void> => {
           v-for="(msg, index) in reversedUserMessages"
           :key="index"
           :chat="msg"
-          @success="onSuccessCopy"
         />
       </div>
       <div class="flex-1 flex gap-4">
