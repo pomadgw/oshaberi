@@ -50,7 +50,6 @@ const systemMessage: ComputedRef<ChatCompletionResponseMessage[]> = computed(
 
 const clearChat = (): void => {
   userMessages.value = []
-  userMessage.value = ''
 }
 
 const { isLoading: isLoadingTokensLength, call: getTokensLength } = useLoading(
