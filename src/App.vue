@@ -83,6 +83,32 @@ const reversedUserMessages = computed(() =>
   userMessages.value.slice().reverse()
 )
 
+const detectLanguage = async (text: string): Promise<string> => {
+  const result = await axios.post('/api/language', {
+    text
+  })
+
+  return result.data.language as string
+}
+
+const reversedUserMessagesWithLanguages = ref<
+  Array<ChatCompletionResponseMessage & { lang: string }>
+>([])
+
+watch(reversedUserMessages, async () => {
+  reversedUserMessagesWithLanguages.value = await Promise.all(
+    reversedUserMessages.value.map(
+      async (message: ChatCompletionResponseMessage) => {
+        const lang = await detectLanguage(message.content ?? '')
+        return {
+          ...message,
+          lang
+        }
+      }
+    )
+  )
+})
+
 const send = async (isResend = false): Promise<void> => {
   if (!isResend) {
     userMessages.value = [
@@ -120,7 +146,7 @@ const send = async (isResend = false): Promise<void> => {
       return
     }
 
-    const lastChoice = result.data.choices[result.data.choices.length - 1]
+    const lastChoice = result.data.choices[0]
 
     userMessages.value = [
       ...userMessages.value,
@@ -169,7 +195,7 @@ const resend = async (): Promise<void> => {
           >
         </div>
         <ChatBubble
-          v-for="(msg, index) in reversedUserMessages"
+          v-for="(msg, index) in reversedUserMessagesWithLanguages"
           :key="index"
           :chat="msg"
         />

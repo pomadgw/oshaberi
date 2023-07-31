@@ -1316,7 +1316,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.26.0":
+"axios@npm:^0.26.0, axios@npm:^0.26.1":
   version: 0.26.1
   resolution: "axios@npm:0.26.1"
   dependencies:
@@ -1354,6 +1354,17 @@ __metadata:
   version: 2.2.0
   resolution: "binary-extensions@npm:2.2.0"
   checksum: ccd267956c58d2315f5d3ea6757cf09863c5fc703e50fbeb13a7dc849b812ef76e3cf9ca8f35a0c48498776a7478d7b4a0418e1e2b8cb9cb9731f2922aaad7f8
+  languageName: node
+  linkType: hard
+
+"binary-install@npm:^1.0.1":
+  version: 1.1.0
+  resolution: "binary-install@npm:1.1.0"
+  dependencies:
+    axios: ^0.26.1
+    rimraf: ^3.0.2
+    tar: ^6.1.11
+  checksum: 271344b49f42460f5e3ec29d681cd4b749aaf9592040d49f6ae86d267b997b5fd094fd7a710df4d477fc299a51833b8cb94206595db6c46edea3f1603266a0d2
   languageName: node
   linkType: hard
 
@@ -1571,6 +1582,13 @@ __metadata:
     strip-ansi: ^6.0.1
     wrap-ansi: ^7.0.0
   checksum: 79648b3b0045f2e285b76fb2e24e207c6db44323581e421c3acbd0e86454cba1b37aea976ab50195a49e7384b871e6dfb2247ad7dec53c02454ac6497394cb56
+  languageName: node
+  linkType: hard
+
+"collapse-white-space@npm:^2.0.0":
+  version: 2.1.0
+  resolution: "collapse-white-space@npm:2.1.0"
+  checksum: c8978b1f4e7d68bf846cfdba6c6689ce8910511df7d331eb6e6757e51ceffb52768d59a28db26186c91dcf9594955b59be9f8ccd473c485790f5d8b90dc6726f
   languageName: node
   linkType: hard
 
@@ -2738,10 +2756,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"franc@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "franc@npm:6.1.0"
+  dependencies:
+    trigram-utils: ^2.0.0
+  checksum: 33ba2ca48eb9e729d4323862d8de097a388751e2efc46ce233396eb8773a115584ceadcf9e5a33d98c3850879b2b2e959413984c966f41641ac4fd7b0bf40dbf
+  languageName: node
+  linkType: hard
+
 "fresh@npm:0.5.2":
   version: 0.5.2
   resolution: "fresh@npm:0.5.2"
   checksum: 13ea8b08f91e669a64e3ba3a20eb79d7ca5379a81f1ff7f4310d54e2320645503cc0c78daedc93dfb6191287295f6479544a649c64d8e41a1c0fb0c221552346
+  languageName: node
+  linkType: hard
+
+"fs-extra@npm:^10.0.0":
+  version: 10.1.0
+  resolution: "fs-extra@npm:10.1.0"
+  dependencies:
+    graceful-fs: ^4.2.0
+    jsonfile: ^6.0.1
+    universalify: ^2.0.0
+  checksum: dc94ab37096f813cc3ca12f0f1b5ad6744dfed9ed21e953d72530d103cea193c2f81584a39e9dee1bea36de5ee66805678c0dddc048e8af1427ac19c00fffc50
   languageName: node
   linkType: hard
 
@@ -2985,7 +3023,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:^4.2.6":
+"graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.6":
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
   checksum: ac85f94da92d8eb6b7f5a8b20ce65e43d66761c55ce85ac96df6865308390da45a8d3f0296dd3a663de65d30ba497bd46c696cc1e248c72b13d6d567138a4fc7
@@ -3491,6 +3529,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"iso-639-3@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "iso-639-3@npm:3.0.1"
+  checksum: cadb43172ff1ab79fee6f70d7d382b0daf271cc22d86b3e6fc69b39674c27a96b99df31ad3603f761ad4800bce18b6f16f262f035fd3cd8a8e9bc96578c3825f
+  languageName: node
+  linkType: hard
+
 "jackspeak@npm:^2.0.3":
   version: 2.2.2
   resolution: "jackspeak@npm:2.2.2"
@@ -3560,6 +3605,19 @@ __metadata:
   bin:
     json5: lib/cli.js
   checksum: 866458a8c58a95a49bef3adba929c625e82532bcff1fe93f01d29cb02cac7c3fe1f4b79951b7792c2da9de0b32871a8401a6e3c5b36778ad852bf5b8a61165d7
+  languageName: node
+  linkType: hard
+
+"jsonfile@npm:^6.0.1":
+  version: 6.1.0
+  resolution: "jsonfile@npm:6.1.0"
+  dependencies:
+    graceful-fs: ^4.1.6
+    universalify: ^2.0.0
+  dependenciesMeta:
+    graceful-fs:
+      optional: true
+  checksum: 7af3b8e1ac8fe7f1eccc6263c6ca14e1966fcbc74b618d3c78a0a2075579487547b94f72b7a1114e844a1e15bb00d440e5d1720bfc4612d790a6f285d5ea8354
   languageName: node
   linkType: hard
 
@@ -3949,12 +4007,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"n-gram@npm:^2.0.0":
+  version: 2.0.2
+  resolution: "n-gram@npm:2.0.2"
+  checksum: 1acaf1558728a37f357b898c1980b1e8a7abad2545faa74d739dcfff1c786274943a42f2e85d9bcf0a88fc6c93b687387f99547422ac0c0db18033f3066edd9d
+  languageName: node
+  linkType: hard
+
 "nanoid@npm:^3.3.6":
   version: 3.3.6
   resolution: "nanoid@npm:3.3.6"
   bin:
     nanoid: bin/nanoid.cjs
   checksum: 7d0eda657002738aa5206107bd0580aead6c95c460ef1bdd0b1a87a9c7ae6277ac2e9b945306aaa5b32c6dcb7feaf462d0f552e7f8b5718abfc6ead5c94a71b3
+  languageName: node
+  linkType: hard
+
+"narrowing@npm:^1.4.0":
+  version: 1.5.0
+  resolution: "narrowing@npm:1.5.0"
+  checksum: dc515cff57e3c506c6eb6c9bbfda99c19c1ef1f46f4a2c2185fe7fdaec90c2d7fc8299d830f9865c6bc4cbe978b306a00feded184a4c236b88bfd37f75470fa9
   languageName: node
   linkType: hard
 
@@ -4278,7 +4350,9 @@ __metadata:
     eslint-plugin-promise: ^6.0.0
     eslint-plugin-vue: latest
     express: ">=5.0.0-beta.1"
+    franc: ^6.1.0
     highlight.js: ^11.8.0
+    iso-639-3: ^3.0.1
     lodash: ^4.17.21
     marked: ^5.1.2
     marked-gfm-heading-id: ^3.0.4
@@ -4292,10 +4366,12 @@ __metadata:
     tailwindcss: ^3.3.3
     ts-node: ^10.9.1
     typescript: "*"
-    vite: ^4.4.5
+    vite: ^4.4.7
+    vite-plugin-wasm-pack: ^0.1.12
     vue: ^3.3.4
     vue-eslint-parser: ^9.3.1
     vue-tsc: ^1.8.5
+    wasm-pack: ^0.12.1
   languageName: unknown
   linkType: soft
 
@@ -5328,6 +5404,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"trigram-utils@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "trigram-utils@npm:2.0.1"
+  dependencies:
+    collapse-white-space: ^2.0.0
+    n-gram: ^2.0.0
+  checksum: 0233cbd1eb6ae4f56a56a76cd8a210201005b6bbf75298f00370d6f8bf87d4b2c4a53f720e1859d7ab5d549ea479928d4e84dc406292db89b19b94ddd4e1144f
+  languageName: node
+  linkType: hard
+
 "ts-api-utils@npm:^1.0.1":
   version: 1.0.1
   resolution: "ts-api-utils@npm:1.0.1"
@@ -5549,6 +5635,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"universalify@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "universalify@npm:2.0.0"
+  checksum: 2406a4edf4a8830aa6813278bab1f953a8e40f2f63a37873ffa9a3bc8f9745d06cc8e88f3572cb899b7e509013f7f6fcc3e37e8a6d914167a5381d8440518c44
+  languageName: node
+  linkType: hard
+
 "unpipe@npm:1.0.0, unpipe@npm:~1.0.0":
   version: 1.0.0
   resolution: "unpipe@npm:1.0.0"
@@ -5614,7 +5707,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^4.4.5":
+"vite-plugin-wasm-pack@npm:^0.1.12":
+  version: 0.1.12
+  resolution: "vite-plugin-wasm-pack@npm:0.1.12"
+  dependencies:
+    chalk: ^4.1.2
+    fs-extra: ^10.0.0
+    narrowing: ^1.4.0
+  checksum: 78a93049c83c15089bce849e6323483a2533b89a9f1a029840f2af8350f08afd8ad87f75192f1dc82e3627d251fbb9baf4fe86b63231f376721efc5dc3b4731d
+  languageName: node
+  linkType: hard
+
+"vite@npm:^4.4.7":
   version: 4.4.7
   resolution: "vite@npm:4.4.7"
   dependencies:
@@ -5722,6 +5826,17 @@ __metadata:
     "@vue/server-renderer": 3.3.4
     "@vue/shared": 3.3.4
   checksum: 58b6c62a66a375ce5df460fcb7ba41b37c8637c635faf06ef472ae4197f412cf9ad83586cd8e3f66c486404fbe8550e694f90ff724a571d1ba78830791099c59
+  languageName: node
+  linkType: hard
+
+"wasm-pack@npm:^0.12.1":
+  version: 0.12.1
+  resolution: "wasm-pack@npm:0.12.1"
+  dependencies:
+    binary-install: ^1.0.1
+  bin:
+    wasm-pack: run.js
+  checksum: 497abceb48b15329bb30f614b9ed7b07d82554ff225b93485794fb91b074a98aeda8091146aafe969c7f9615d106c770d215cf916bebf65451978f7222fcbe0b
   languageName: node
   linkType: hard
 
