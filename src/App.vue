@@ -104,7 +104,10 @@ const send = async (isResend = false): Promise<void> => {
     model: store.model,
     messages,
     temperature: store.temperature,
-    max_tokens: store.maxTokens === 0 ? undefined : store.maxTokens,
+    max_tokens:
+      store.maxTokens === 0
+        ? undefined
+        : store.maxTokens - userMessagesTokenLength.value,
     presence_penalty: store.presencePenalty,
     frequency_penalty: store.frequencyPenalty
   }
