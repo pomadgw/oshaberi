@@ -1,4 +1,5 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "incremental": true,
     "baseUrl": ".",
@@ -15,16 +16,9 @@
     "noImplicitThis": true,
     "noUnusedLocals": true
   },
-  "references": [
-    {
-      "path": "lingua-nodejs"
-    },
-    {
-      "path": "client"
-    },
-    {
-      "path": "server"
-    }
+  "include": [
+    "index.mjs",
+    "**/*.ts"
   ],
-  "exclude": ["node_modules/", "dist/", "*.d.ts"]
+  "exclude": ["node_modules/", "dist/", "*.d.ts", "*.mjs"]
 }

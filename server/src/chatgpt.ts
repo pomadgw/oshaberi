@@ -8,14 +8,6 @@ import {
 } from 'openai'
 import { get_encoding } from '@dqbd/tiktoken'
 
-const router = express.Router()
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY
-})
-
-const openai = new OpenAIApi(configuration)
-
 const tokenizer = get_encoding('cl100k_base')
 
 export function tokenLength(
@@ -39,30 +31,40 @@ export function tokenLength(
   return totalTokens
 }
 
-router.post('/tokens', async (req, res) => {
-  try {
-    const tokens = tokenLength(req.body)
+export default function chatGptRouter(): express.Router {
+  const router = express.Router()
 
-    res.json({ tokens })
-  } catch (err) {
-    console.error(err)
-    const axiosError = err as AxiosError<any>
+  const configuration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY
+  })
 
-    res.status(axiosError.status ?? 500).json(axiosError.response?.data)
-  }
-})
+  const openai = new OpenAIApi(configuration)
 
-router.post('/', async (req, res) => {
-  try {
-    const chatCompletion = await openai.createChatCompletion(req.body)
+  router.post('/tokens', async (req, res) => {
+    try {
+      const tokens = tokenLength(req.body)
 
-    res.json(chatCompletion.data)
-  } catch (err) {
-    console.error(err)
-    const axiosError = err as AxiosError<any>
+      res.json({ tokens })
+    } catch (err) {
+      console.error(err)
+      const axiosError = err as AxiosError<any>
 
-    res.status(axiosError.status ?? 500).json(axiosError.response?.data)
-  }
-})
+      res.status(axiosError.status ?? 500).json(axiosError.response?.data)
+    }
+  })
 
-export default router
+  router.post('/', async (req, res) => {
+    try {
+      const chatCompletion = await openai.createChatCompletion(req.body)
+
+      res.json(chatCompletion.data)
+    } catch (err) {
+      console.error(err)
+      const axiosError = err as AxiosError<any>
+
+      res.status(axiosError.status ?? 500).json(axiosError.response?.data)
+    }
+  })
+
+  return router
+}

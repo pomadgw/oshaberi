@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon --watch './**/*.ts' --watch .env --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm' src/index.ts",
-    "build": "tsc --project ./server"
+    "build": "tsc"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",

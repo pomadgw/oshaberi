@@ -1,7 +1,7 @@
-import 'dotenv/config'
+import dotenv from 'dotenv'
+import path from 'path'
 
 import express from 'express'
-import path from 'path'
 import cors from 'cors'
 
 // import { franc } from 'franc'
@@ -11,9 +11,19 @@ import homeRouters from './home.js'
 import assetsRouters from './assets.js'
 import chatRouters from './chatgpt.js'
 
+if (process.env.NODE_ENV === 'production') {
+  dotenv.config({
+    path: path.join(path.resolve(), '.env')
+  })
+} else {
+  dotenv.config({
+    path: path.join(path.resolve(), '../.env')
+  })
+}
+
 const port = Number(process.env.PORT ?? 3000)
 const hostname = process.env.HOSTNAME ?? 'localhost'
-const publicPath = path.join(path.resolve(), 'public')
+const publicPath = path.join(path.resolve(), '../client/public')
 const distPath = path.join(path.resolve(), 'dist')
 
 const app = express()
@@ -49,7 +59,7 @@ app.options(
   })
 )
 
-app.use('/api/chat', chatRouters)
+app.use('/api/chat', chatRouters())
 
 app.post('/api/language', (req, res) => {
   const { text } = req.body

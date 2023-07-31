@@ -14,5 +14,11 @@
   "license": "MIT",
   "devDependencies": {
     "cargo-cp-artifact": "^0.1"
+  },
+  "exports": {
+    ".": {
+      "require": "./index.node",
+      "import": "./index.mjs"
+    }
   }
 }
