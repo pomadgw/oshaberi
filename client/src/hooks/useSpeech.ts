@@ -7,6 +7,18 @@ interface useSpeachReturn {
 
 const voices = ref<SpeechSynthesisVoice[]>([])
 
+// cancel any current speech when the page is closed
+window.addEventListener(
+  'beforeunload',
+  () => {
+    if (typeof speechSynthesis === 'undefined') return
+
+    const synth = window.speechSynthesis
+    synth.cancel()
+  },
+  { once: true }
+)
+
 export default function useSpeech(): useSpeachReturn {
   function populateVoiceList(): SpeechSynthesisVoice[] {
     if (typeof speechSynthesis === 'undefined') {
@@ -20,7 +32,6 @@ export default function useSpeech(): useSpeachReturn {
     const synth = window.speechSynthesis
 
     synth.addEventListener('voiceschanged', () => {
-      console.log('ha')
       const res = populateVoiceList()
       res.sort((a, b) => {
         const aname = `${a.lang} ${a.name}`.toUpperCase()
