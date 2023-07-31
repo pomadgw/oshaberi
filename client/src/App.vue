@@ -94,27 +94,33 @@ const reversedUserMessagesWithLanguages = ref<
   Array<ChatCompletionResponseMessage & { lang: string }>
 >([])
 
-watch(reversedUserMessages, async () => {
-  reversedUserMessagesWithLanguages.value = reversedUserMessages.value.map(
-    (e) => {
-      return {
-        ...e,
-        lang: ''
+watch(
+  reversedUserMessages,
+  async () => {
+    reversedUserMessagesWithLanguages.value = reversedUserMessages.value.map(
+      (e) => {
+        return {
+          ...e,
+          lang: ''
+        }
       }
-    }
-  )
+    )
 
-  await Promise.all(
-    reversedUserMessagesWithLanguages.value.map(async (message) => {
-      const lang = await detectLanguage(message.content ?? '')
-      message.lang = lang
-    })
-  )
+    await Promise.all(
+      reversedUserMessagesWithLanguages.value.map(async (message) => {
+        const lang = await detectLanguage(message.content ?? '')
+        message.lang = lang
+      })
+    )
 
-  reversedUserMessagesWithLanguages.value = [
-    ...reversedUserMessagesWithLanguages.value
-  ]
-})
+    reversedUserMessagesWithLanguages.value = [
+      ...reversedUserMessagesWithLanguages.value
+    ]
+  },
+  {
+    immediate: true
+  }
+)
 
 const send = async (isResend = false): Promise<void> => {
   if (!isResend) {
