@@ -4,7 +4,7 @@ import { type ChatCompletionResponseMessage } from 'openai'
 import { marked } from 'marked'
 
 import useSpeech from '../hooks/useSpeech'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps<{
   chat: ChatCompletionResponseMessage & { lang: string }
@@ -14,6 +14,24 @@ const { voices, speak } = useSpeech()
 
 const selectedLanguage = ref(props.chat.lang)
 const selectedVoice = ref<SpeechSynthesisVoice | null>(null)
+
+const content = computed(() => {
+  if (props.chat.function_call != null) {
+    return marked.parse(
+      `
+${props.chat.content ?? ''}
+
+**Calling \`${props.chat.function_call.name ?? '-'}\` with arguments:**
+
+\`\`\`json
+${props.chat.function_call.arguments ?? ''}
+\`\`\`
+    `.trim()
+    )
+  } else {
+    return marked.parse(props.chat.content ?? '')
+  }
+})
 
 watch(
   () => props.chat.lang,
@@ -64,12 +82,12 @@ const doSpeak = (): void => {
     </div>
     <div
       :class="{
-        'self-end': props.chat.role === 'assistant',
+        'self-end': props.chat.role !== 'user',
         'border-blue-300': props.chat.role === 'user',
-        'border-yellow-300': props.chat.role === 'assistant'
+        'border-yellow-300': props.chat.role !== 'user'
       }"
       class="border-2 rounded-md p-4 marked max-w-full overflow-x-auto"
-      v-html="marked.parse(props.chat.content ?? '')"
+      v-html="content"
     ></div>
   </div>
 </template>

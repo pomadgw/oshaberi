@@ -2,6 +2,7 @@
 import {
   type CreateChatCompletionResponse,
   type ChatCompletionResponseMessage,
+  type ChatCompletionRequestMessage,
   type CreateChatCompletionRequest
 } from 'openai'
 
@@ -29,8 +30,12 @@ const openSettings = (): void => {
   dialogOpen.value = true
 }
 
+type ChatCompletion =
+  | ChatCompletionResponseMessage
+  | ChatCompletionRequestMessage
+
 const userMessage = ref('')
-const userMessages = ref<ChatCompletionResponseMessage[]>([])
+const userMessages = ref<ChatCompletion[]>([])
 const userMessagesTokenLength = ref(0)
 
 const onSuccessCopy = (): void => {
@@ -91,14 +96,14 @@ const detectLanguage = async (text: string): Promise<string> => {
 }
 
 const reversedUserMessagesWithLanguages = ref<
-  Array<ChatCompletionResponseMessage & { lang: string }>
+  Array<ChatCompletion & { lang: string }>
 >([])
 
 watch(
   reversedUserMessages,
   async () => {
     reversedUserMessagesWithLanguages.value = reversedUserMessages.value.map(
-      (e) => {
+      (e: ChatCompletion) => {
         return {
           ...e,
           lang: ''
@@ -152,22 +157,46 @@ const send = async (isResend = false): Promise<void> => {
   }
 
   try {
-    const result: AxiosResponse<CreateChatCompletionResponse> =
-      await axios.post('/api/chat', params)
+    let result: AxiosResponse<CreateChatCompletionResponse> = await axios.post(
+      '/api/chat',
+      params
+    )
 
     if (result.data.choices.length === 0) {
       return
     }
 
-    const lastChoice = result.data.choices[0]
+    let lastChoice = result.data.choices[0]
 
-    userMessages.value = [
-      ...userMessages.value,
-      {
-        role: lastChoice.message?.role ?? 'assistant',
-        content: lastChoice.message?.content ?? ''
+    if (lastChoice.message != null) {
+      userMessages.value = [...userMessages.value, lastChoice.message]
+    }
+
+    while (true) {
+      if (
+        lastChoice.finish_reason === 'function_call' &&
+        lastChoice.message?.function_call != null
+      ) {
+        const messages: ChatCompletionResponseMessage[] = [
+          ...systemMessage.value,
+          ...userMessages.value
+        ]
+
+        result = await axios.post('/api/chat/function', { ...params, messages })
+
+        if (result.data.choices.length === 0) {
+          return
+        }
+
+        lastChoice = result.data.choices[0]
+
+        if (lastChoice.message != null) {
+          userMessages.value = [...userMessages.value, lastChoice.message]
+        }
+      } else {
+        break
       }
-    ]
+    }
   } catch (err) {
     console.error(err)
     toastText.value = `Failed to send message: ${(err as Error).toString()}`
