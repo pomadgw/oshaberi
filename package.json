@@ -11,7 +11,8 @@
     "build:frontend": "cd client && yarn build",
     "build": "concurrently 'npm:build:frontend' 'npm:build:backend'",
     "start": "NODE_ENV=production node dist-server/index.js",
-    "lint": "eslint --ext .ts,.vue"
+    "lint": "eslint --ext .ts,.vue",
+    "test:frontend": "cd client && yarn test"
   },
   "workspaces": [
     "lingua-nodejs",
