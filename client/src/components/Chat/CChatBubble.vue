@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
 <script setup lang="ts" generic="T">
-import { type ChatMessage } from 'client/src/lib/types/chat'
+import { type ChatMessage } from '../../lib/types/chat'
 
 defineProps<{
   message: ChatMessage<T>
