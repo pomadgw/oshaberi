@@ -6,6 +6,10 @@ const props = defineProps({
   isSending: {
     type: Boolean,
     default: false
+  },
+  tokenCount: {
+    type: Number,
+    default: () => 0
   }
 })
 
@@ -19,7 +23,7 @@ const sendMessage = (): void => {
 }
 </script>
 <template>
-  <div class="flex-1 flex gap-4">
+  <div class="flex gap-4">
     <div
       :data-replicated-value="userMessage"
       class="flex-1 grid grow-wrap after:max-h-[100px] after:border-blue-100 after:whitespace-pre-wrap after:invisible after:px-3 after:py-2 after:overflow-hidden"
@@ -45,6 +49,9 @@ const sendMessage = (): void => {
         <span v-else class="text-xs text-gray-400"
           >Current tokens length: {{ userMessagesTokenLength }}</span
         > -->
+        <span class="text-xs text-gray-400"
+          >Current tokens length: {{ tokenCount }}</span
+        >
       </div>
     </div>
     <c-button

@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+#app {
+  @apply min-h-screen;
+}
+
 .marked p,
 .marked pre,
 .marked ol,
