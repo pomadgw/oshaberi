@@ -12,20 +12,15 @@ import CSettings from './components/CSettings.vue'
 import CButton from './components/CButton.vue'
 
 import { type ChatMessages } from './lib/types/chat'
-import { type Ref, ref, watch, nextTick, computed, type ComputedRef } from 'vue'
+import { type Ref, type ComputedRef, ref, watch, nextTick, computed } from 'vue'
 import useTokenCalculator from './hooks/useTokenCalculator'
 import { useChatGPTSetting } from './store'
 import clipboardEvent from './clipboard'
 import useLLM from './hooks/useLLM'
 import { marked } from 'marked'
+import useToast from './hooks/useToast'
 
-const isToastOpen = ref(false)
-const toastText = ref('')
-
-const openToast = (text: string): void => {
-  toastText.value = text
-  isToastOpen.value = true
-}
+const { openToast } = useToast()
 
 const settingStore = useChatGPTSetting()
 const messages: Ref<ChatMessages<ChatCompletionResponseMessage>> = ref([])
@@ -137,8 +132,7 @@ watch(
 )
 
 const onSuccessCopy = (): void => {
-  toastText.value = 'Copied!'
-  isToastOpen.value = true
+  openToast('Copied!')
 }
 
 clipboardEvent.on('success', onSuccessCopy)
@@ -151,7 +145,7 @@ const openSettings = (): void => {
 
 <template>
   <CSettings v-model:open="dialogOpen" />
-  <CToast v-model:open="isToastOpen" :text="toastText" class="z-50" />
+  <CToast class="z-50" />
   <div class="max-w-5xl m-auto p-8 flex flex-col h-screen">
     <div class="flex gap-3">
       <c-button @click="openSettings">Open Settings</c-button>
