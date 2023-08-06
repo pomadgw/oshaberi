@@ -10,9 +10,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div
-    class="masked-overflow max-h-[768px] overflow-y-auto flex flex-col gap-3 p-6"
-  >
+  <div class="masked-overflow overflow-y-auto flex flex-col gap-3 p-6">
     <CChatBubble
       v-for="(message, index) in props.messages"
       :key="index"

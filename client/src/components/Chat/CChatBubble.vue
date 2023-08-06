@@ -23,7 +23,7 @@ defineProps<{
           Copy
         </button>
       </div>
-      <div class="marked max-w-sm md:max-w-xl overflow-x-auto">
+      <div class="marked max-w-full overflow-x-auto">
         <div v-if="message.isHTML" v-html="message.message" />
         <p v-else>{{ message.message }}</p>
       </div>

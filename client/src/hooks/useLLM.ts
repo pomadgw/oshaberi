@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/vue-query'
 import {
   type CreateChatCompletionResponse,
+  type ErrorResponse,
   // type ChatCompletionResponseMessage,
   // type ChatCompletionRequestMessage,
   type CreateChatCompletionRequest
@@ -26,13 +27,13 @@ export default function useLLM() {
 
   const chat = useMutation<
     AxiosResponse<CreateChatCompletionResponse>,
-    AxiosError<any>,
+    AxiosError<ErrorResponse>,
     CreateChatCompletionRequest
   >(['chat'], doChat)
 
   const chatFunc = useMutation<
     AxiosResponse<CreateChatCompletionResponse>,
-    AxiosError<any>,
+    AxiosError<ErrorResponse>,
     CreateChatCompletionRequest
   >(['chat-func'], callFunc)
 

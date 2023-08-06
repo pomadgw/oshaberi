@@ -43,12 +43,6 @@ const sendMessage = (): void => {
       <div>
         <span class="text-xs text-gray-400">Press Ctrl + Enter to send.</span
         >&nbsp;
-        <!-- <span v-if="isLoadingTokensLength" class="text-xs text-gray-400">
-          Calculating tokens length...
-        </span>
-        <span v-else class="text-xs text-gray-400"
-          >Current tokens length: {{ userMessagesTokenLength }}</span
-        > -->
         <span class="text-xs text-gray-400"
           >Current tokens length: {{ tokenCount }}</span
         >
