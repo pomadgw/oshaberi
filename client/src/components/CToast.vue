@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 // define prop
 const props = defineProps<{
@@ -12,6 +12,37 @@ const emit = defineEmits<(e: 'update:open', value: boolean) => void>()
 const close = (): void => {
   emit('update:open', false)
 }
+
+const toastRef = ref<HTMLDivElement>()
+const width = ref(0)
+
+const toastStyle = computed(() => {
+  return {
+    left: `calc(50% - ${width.value / 2}px)`
+  }
+})
+
+const setToastWidth = (): void => {
+  if (toastRef.value != null) {
+    width.value = toastRef.value.clientWidth ?? 0
+  }
+}
+
+watch(
+  () => props.open,
+  (value) => {
+    if (value) {
+      setToastWidth()
+    }
+  },
+  {
+    immediate: true
+  }
+)
+
+onMounted(() => {
+  setToastWidth()
+})
 
 watch(
   () => props.open,
@@ -28,7 +59,9 @@ watch(
   <Transition>
     <div
       v-if="props.open"
-      class="absolute w-full flex flex-col items-center p-10"
+      ref="toastRef"
+      :style="toastStyle"
+      class="fixed flex flex-col items-center m-auto mt-10"
     >
       <div
         class="flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
