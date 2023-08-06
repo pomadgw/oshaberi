@@ -35,7 +35,7 @@ const close = (): void => {
     ref="dialog"
     @close="$emit('update:open', false)"
     :open="props.open"
-    class="border border-blue-100 rounded-md p-4 drop-shadow-md max-h-screen overflow-auto"
+    class="z-50 border border-blue-100 rounded-md p-4 drop-shadow-md max-h-screen overflow-auto"
   >
     <div class="flex flex-col gap-3">
       <div>
