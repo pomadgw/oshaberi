@@ -1,0 +1,16 @@
+diff --git a/package.json b/package.json
+index 7c75c14bf90647df7d4b391e903b18f7910beb72..a1173da69cc1801eb423d9e4177d20a0abf536cd 100644
+--- a/package.json
++++ b/package.json
+@@ -4,7 +4,10 @@
+   "description": "Add WebAssembly ESM integration (aka. Webpack's `asyncWebAssembly`) to Vite and support `wasm-pack` generated modules.",
+   "main": "dist/index.js",
+   "exports": {
+-    "import": "./exports/import.mjs",
++    "import": {
++        "types": "./dist/index.d.ts",
++        "default": "./exports/import.mjs"
++    },
+     "require": "./exports/require.cjs"
+   },
+   "repository": "https://github.com/Menci/vite-plugin-wasm",

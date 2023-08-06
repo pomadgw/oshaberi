@@ -39,6 +39,7 @@
   },
   "packageManager": "yarn@3.6.1",
   "resolutions": {
-    "@types/express-serve-static-core@^4.17.33": "patch:@types/express-serve-static-core@npm%3A4.17.35#./.yarn/patches/@types-express-serve-static-core-npm-4.17.35-c86e5f6e4a.patch"
+    "@types/express-serve-static-core@^4.17.33": "patch:@types/express-serve-static-core@npm%3A4.17.35#./.yarn/patches/@types-express-serve-static-core-npm-4.17.35-c86e5f6e4a.patch",
+    "vite-plugin-wasm@^3.2.2": "patch:vite-plugin-wasm@npm%3A3.2.2#./.yarn/patches/vite-plugin-wasm-npm-3.2.2-d57e3fcde1.patch"
   }
 }

@@ -6944,12 +6944,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-wasm@npm:^3.2.2":
+"vite-plugin-wasm@npm:3.2.2":
   version: 3.2.2
   resolution: "vite-plugin-wasm@npm:3.2.2"
   peerDependencies:
     vite: ^2 || ^3 || ^4
   checksum: ed9b56b3cd47e6376c21592f4d24f818334d5796226f6c1dfca89a4f744d69a34cb85dd5e06f164a2670827113ccfa5f03d0361e51210012706123374b0f8277
+  languageName: node
+  linkType: hard
+
+"vite-plugin-wasm@patch:vite-plugin-wasm@npm%3A3.2.2#./.yarn/patches/vite-plugin-wasm-npm-3.2.2-d57e3fcde1.patch::locator=oshaberi%40workspace%3A.":
+  version: 3.2.2
+  resolution: "vite-plugin-wasm@patch:vite-plugin-wasm@npm%3A3.2.2#./.yarn/patches/vite-plugin-wasm-npm-3.2.2-d57e3fcde1.patch::version=3.2.2&hash=f6a394&locator=oshaberi%40workspace%3A."
+  peerDependencies:
+    vite: ^2 || ^3 || ^4
+  checksum: 6bf008b5777c75b7e9136fbdc7ec3d55b466bb7ef09e94befb7b55e88e0c24f6b8661ac1b11e70d80013a52504987b3c8ccb952cce65ce4f53b94ad16becb169
   languageName: node
   linkType: hard
 
