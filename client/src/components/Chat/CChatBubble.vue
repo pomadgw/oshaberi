@@ -11,21 +11,26 @@ defineProps<{
   <div class="flex flex-col items-start gap-1">
     <div
       :class="{
-        'self-end bg-blue-100': message.user !== 'user',
-        'bg-yellow-100': message.user === 'user'
+        'chat-end': message.user !== 'user',
+        'chat-start': message.user === 'user'
       }"
-      class="flex flex-col gap-2 border p-3 rounded-md"
+      class="chat"
     >
-      <div class="text-sm text-gray-700">
-        {{ message.user }}
+      <div class="chat-bubble">
+        <div class="flex items-center">
+          <div class="text-sm flex-1">{{ message.user }}</div>
 
-        <button :data-clipboard-text="message.message" class="js-copy-btn">
-          Copy
-        </button>
-      </div>
-      <div class="marked max-w-full overflow-x-auto">
-        <div v-if="message.isHTML" v-html="message.message" />
-        <p v-else>{{ message.message }}</p>
+          <button
+            :data-clipboard-text="message.message"
+            class="js-copy-btn text-xs"
+          >
+            Copy
+          </button>
+        </div>
+        <div class="marked max-w-full overflow-x-auto">
+          <div v-if="message.isHTML" v-html="message.message" />
+          <p v-else>{{ message.message }}</p>
+        </div>
       </div>
     </div>
   </div>

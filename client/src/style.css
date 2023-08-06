@@ -18,11 +18,32 @@
 
 /* hljs */
 .code-highlight {
-  @apply p-3 border border-blue-200 rounded-md flex flex-col gap-2;
+  @apply p-3 rounded-md flex flex-col gap-2 bg-[#fdf6e3] dark:bg-[#002b36];
+  /* dark:bg-gray-600 dark:text-gray-50; */
+
+  &__lang, &__disclaimer {
+    @apply text-sm text-gray-600 dark:text-gray-50;
+  }
+
+  &__footer {
+    @apply flex gap-2 items-center border-t-4 border-[#eee8d5] dark:border-[#073642] pt-3 px-3 -mx-3;
+  }
+
+  &__footer-inner {
+    @apply flex-1;
+  }
+
+  &__copy-btn {
+    @apply text-sm;
+  }
+
+  pre {
+    @apply text-[#93a1a1];
+  }
 }
 
 .hljs-keyword {
-  @apply text-blue-600 font-bold;
+  @apply text-[#268bd2] font-bold;
 }
 
 .hljs-tag {
@@ -30,24 +51,24 @@
 }
 
 .hljs-title {
-  @apply text-blue-900;
+  @apply text-[#2aa198];
 }
 
 .hljs-name {
-  @apply text-blue-600;
+  @apply text-[#6c71c4];
 }
 
 .hljs-attr {
-  @apply text-purple-600;
+  @apply text-[#d33682];
 }
 
 .hljs-string {
-  @apply text-green-600;
+  @apply text-[#859900];
 }
 
 .hljs-comment,
 .hljs-quote,
 .hljs-deletion,
 .hljs-meta {
-  @apply text-gray-500 italic;
+  @apply text-[#586e75] italic;
 }

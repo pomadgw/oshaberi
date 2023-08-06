@@ -27,5 +27,5 @@
   "rules": {
     "prettier/prettier": "error"
   },
-  "ignorePatterns": ["dist", "dist-server", "node_modules"]
+  "ignorePatterns": ["dist", "dist-server", "node_modules", "./*.js"]
 }

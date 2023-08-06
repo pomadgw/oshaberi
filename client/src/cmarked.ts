@@ -66,15 +66,15 @@ marked.use({
       const language = hljs.getLanguage(lang) != null ? lang : 'plaintext'
       return `
 <div class="code-highlight">
-  <p class="text-sm text-gray-600 border-b pb-3 px-3 -mx-3">Language: ${language}</p>
+  <p class="code-highlight__lang">Language: ${language}</p>
     <pre class="overflow-auto w-full">${
       hljs.highlight(code, { language }).value
     }</pre>
-  <div class="flex gap-2 items-center border-t pt-3 px-3 -mx-3">
-    <div class="flex-1">
-      <p class="text-sm text-gray-600">Use the code with caution.</p>
+  <div class="code-highlight__footer">
+    <div class="code-highlight__footer-inner flex-1">
+      <p class="code-highlight__disclaimer">Use the code with caution.</p>
     </div>
-    <button class="js-copy-btn text-sm" data-clipboard-text="${copiedCode}">
+    <button class="js-copy-btn code-highlight__copy-btn" data-clipboard-text="${copiedCode}">
       Copy
     </button>
   </div>

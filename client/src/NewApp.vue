@@ -9,7 +9,6 @@ import CChat from './components/Chat/CChat.vue'
 import CChatInput from './components/Chat/CChatInput.vue'
 import CToast from './components/CToast.vue'
 import CSettings from './components/CSettings.vue'
-import CButton from './components/CButton.vue'
 
 import { type ChatMessages } from './lib/types/chat'
 import { type Ref, type ComputedRef, ref, watch, nextTick, computed } from 'vue'
@@ -146,24 +145,35 @@ const openSettings = (): void => {
 <template>
   <CSettings v-model:open="dialogOpen" />
   <CToast class="z-50" />
-  <div class="max-w-5xl m-auto p-8 flex flex-col h-screen">
-    <div class="flex gap-3">
-      <c-button @click="openSettings">Open Settings</c-button>
-      <c-button @click="clearChat">Clear Chat</c-button>
+  <div class="flex flex-col max-w-5xl m-auto h-screen">
+    <div class="navbar bg-base-100">
+      <div class="flex-1">
+        <a class="btn btn-ghost normal-case text-xl">oShaberi</a>
+      </div>
+      <div class="navbar-end">
+        <button class="btn btn-ghost normal-case" @click="openSettings">
+          Settings
+        </button>
+        <button class="btn btn-ghost normal-case" @click="clearChat">
+          Clear chat
+        </button>
+      </div>
     </div>
-    <div class="flex-1">
-      <CChat
-        ref="cchatRef"
-        :messages="messages"
-        style="max-height: calc(100vh - 48px - 124px - 64px)"
+    <div class="p-8 flex flex-col flex-1">
+      <div class="flex-1">
+        <CChat
+          ref="cchatRef"
+          :messages="messages"
+          style="max-height: calc(100vh - 48px - 124px - 64px - 64px)"
+        />
+      </div>
+
+      <CChatInput
+        :token-count="tokenCount"
+        :is-sending="chat.status.value === 'loading'"
+        class="mt-3"
+        @send-message="sendMessage"
       />
     </div>
-
-    <CChatInput
-      :token-count="tokenCount"
-      :is-sending="chat.status.value === 'loading'"
-      class="mt-3"
-      @send-message="sendMessage"
-    />
   </div>
 </template>

@@ -38,7 +38,7 @@ const sendMessage = (): void => {
     >
       <textarea
         v-model="userMessage"
-        class="w-full max-h-[100px] rounded-md border border-blue-100 outline-blue-200 px-3 py-2 resize-none"
+        class="w-full max-h-[100px] textarea textarea-bordered"
       ></textarea>
       <div>
         <span class="text-xs text-gray-400">Press Ctrl + Enter to send.</span
