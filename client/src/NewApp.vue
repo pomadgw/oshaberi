@@ -227,7 +227,7 @@ const openSettings = (): void => {
         </button>
       </div>
     </div>
-    <div class="p-8 flex flex-col flex-1">
+    <div class="p-4 md:p-8 flex flex-col flex-1">
       <div class="flex-1">
         <CChat
           ref="cchatRef"

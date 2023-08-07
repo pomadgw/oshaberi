@@ -41,7 +41,8 @@ const sendMessage = (): void => {
         class="w-full max-h-[100px] textarea textarea-bordered"
       ></textarea>
       <div>
-        <span class="text-xs text-gray-400">Press Ctrl + Enter to send.</span
+        <span class="text-xs text-gray-400 hidden md:inline-block"
+          >Press Ctrl + Enter to send.</span
         >&nbsp;
         <span class="text-xs text-gray-400"
           >Current tokens length: {{ tokenCount }}</span
