@@ -3,6 +3,7 @@ export interface ChatMessage<T> {
   user: string
   isHTML?: boolean
   value: T
+  hide?: boolean
 }
 
 export type ChatMessages<T> = Array<ChatMessage<T>>

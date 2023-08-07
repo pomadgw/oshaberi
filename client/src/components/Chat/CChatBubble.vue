@@ -8,13 +8,13 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col items-start gap-1">
+  <div v-if="!message.hide" class="flex flex-col items-start gap-1">
     <div
       :class="{
         'chat-end': message.user !== 'user',
         'chat-start': message.user === 'user'
       }"
-      class="chat"
+      class="chat w-full"
     >
       <div class="chat-bubble">
         <div class="flex items-center">

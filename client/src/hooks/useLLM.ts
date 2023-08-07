@@ -4,7 +4,8 @@ import {
   type ErrorResponse,
   // type ChatCompletionResponseMessage,
   // type ChatCompletionRequestMessage,
-  type CreateChatCompletionRequest
+  type CreateChatCompletionRequest,
+  type ChatCompletionRequestMessage
 } from 'openai'
 import axios, { type AxiosResponse, type AxiosError } from 'axios'
 
@@ -19,9 +20,12 @@ export default function useLLM() {
     return await axios.post(url, data)
   }
 
-  async function callFunc(
-    data: CreateChatCompletionRequest
-  ): Promise<AxiosResponse<CreateChatCompletionResponse>> {
+  async function callFunc(data: CreateChatCompletionRequest): Promise<
+    AxiosResponse<{
+      result: CreateChatCompletionResponse
+      functionMessage: ChatCompletionRequestMessage
+    }>
+  > {
     return await axios.post(callFuncUrl, data)
   }
 
@@ -32,7 +36,10 @@ export default function useLLM() {
   >(['chat'], doChat)
 
   const chatFunc = useMutation<
-    AxiosResponse<CreateChatCompletionResponse>,
+    AxiosResponse<{
+      result: CreateChatCompletionResponse
+      functionMessage: ChatCompletionRequestMessage
+    }>,
     AxiosError<ErrorResponse>,
     CreateChatCompletionRequest
   >(['chat-func'], callFunc)

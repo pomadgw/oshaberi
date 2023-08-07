@@ -5,7 +5,8 @@ import {
   type ChatCompletionRequestMessage,
   Configuration,
   OpenAIApi,
-  type CreateChatCompletionRequest
+  type CreateChatCompletionRequest,
+  type ChatCompletionRequestMessageRoleEnum
 } from 'openai'
 import { get_encoding } from '@dqbd/tiktoken'
 
@@ -124,17 +125,21 @@ export default function chatGptRouter(): express.Router {
       const result = await functionLibrary?.callback(
         parsedArguments ?? argumentsFromOpenAI
       )
-      console.log({ result })
 
-      body.messages.push({
-        role: 'function',
+      const functionMessage = {
+        role: 'function' as ChatCompletionRequestMessageRoleEnum,
         name: lastMessage.function_call?.name,
         content: JSON.stringify(result)
-      })
+      }
+
+      body.messages.push(functionMessage)
 
       const chatCompletion = await openai.createChatCompletion(body)
 
-      res.json(chatCompletion.data)
+      res.json({
+        result: chatCompletion.data,
+        functionMessage
+      })
     } catch (err) {
       console.error(err)
       const axiosError = err as AxiosError<any>

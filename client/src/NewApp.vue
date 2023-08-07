@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {
   type ChatCompletionResponseMessageRoleEnum,
-  type ChatCompletionResponseMessage,
-  type CreateChatCompletionRequest
+  type CreateChatCompletionRequest,
+  type ChatCompletionRequestMessageFunctionCall,
+  type ChatCompletionRequestMessage
 } from 'openai'
 
 import CChat from './components/Chat/CChat.vue'
@@ -22,13 +23,13 @@ import useToast from './hooks/useToast'
 const { openToast } = useToast()
 
 const settingStore = useChatGPTSetting()
-const messages: Ref<ChatMessages<ChatCompletionResponseMessage>> = ref([])
+const messages: Ref<ChatMessages<ChatCompletionRequestMessage>> = ref([])
 
 const clearChat = (): void => {
   messages.value = []
 }
 
-const systemMessage: ComputedRef<ChatCompletionResponseMessage[]> = computed(
+const systemMessage: ComputedRef<ChatCompletionRequestMessage[]> = computed(
   () => {
     return settingStore.system !== ''
       ? [{ role: 'system', content: settingStore.system }]
@@ -60,15 +61,21 @@ const params: ComputedRef<CreateChatCompletionRequest> = computed(() => ({
 
 const appendToMessages = (
   role: ChatCompletionResponseMessageRoleEnum,
-  content: string
+  content: string,
+  functionCall?: ChatCompletionRequestMessageFunctionCall,
+  name?: string,
+  message?: string
 ): void => {
+  const theMessage = message ?? content
   messages.value = [
     ...messages.value,
     {
       user: role as string,
-      message: role === 'user' ? content : marked.parse(content),
+      message: role === 'user' ? theMessage : marked.parse(theMessage),
       isHTML: role !== 'user',
       value: {
+        name,
+        function_call: functionCall,
         content,
         role
       }
@@ -76,7 +83,7 @@ const appendToMessages = (
   ]
 }
 
-const { chat } = useLLM()
+const { chat, chatFunc } = useLLM()
 const send = (isResend = false): void => {
   const messageLength = messages.value.length
 
@@ -87,15 +94,35 @@ const send = (isResend = false): void => {
   chat.mutate(params.value)
 }
 
+const lastMessage = computed(() => {
+  return messages.value[messages.value.length - 1]
+})
+
 watch(chat.isSuccess, (value) => {
   if (value) {
     const data = chat.data?.value?.data
 
     if (data != null) {
-      const message = data.choices[0].message?.content ?? ''
+      const content = data.choices[0].message?.content ?? ''
       const role = data.choices[0].message?.role ?? 'assistant'
+      const functionCall = data.choices[0].message?.function_call
 
-      appendToMessages(role, message)
+      let message = content
+      if (functionCall != null) {
+        message = `
+${content ?? ''}
+
+**Calling \`${functionCall.name ?? '-'}\` with arguments:**
+
+\`\`\`json
+${functionCall.arguments ?? ''}
+\`\`\`
+    `.trim()
+      }
+
+      appendToMessages(role, content, functionCall, undefined, message)
+
+      sendWithFunctionCall()
     }
   }
 })
@@ -106,6 +133,47 @@ watch(chat.isError, (isError) => {
     const errorMessage =
       chat.error?.value?.response?.data?.error.toString() ?? 'Unknown error'
     openToast(`Error: ${errorMessage}`)
+  }
+})
+
+const sendWithFunctionCall = (): void => {
+  if (lastMessage.value.value.function_call != null) {
+    chatFunc.mutate(params.value)
+  }
+}
+
+watch(chatFunc.isSuccess, (value) => {
+  if (value) {
+    const data = chatFunc.data?.value?.data
+
+    if (data != null) {
+      const message = data.result.choices[0].message?.content ?? ''
+      const role = data.result.choices[0].message?.role ?? 'assistant'
+      const functionCall = data.result.choices[0].message?.function_call
+
+      const functionMessage = data.functionMessage
+
+      messages.value = [
+        ...messages.value,
+        {
+          user: functionMessage.role as string,
+          message: marked.parse(`
+Function returned:
+
+\`\`\`
+${functionMessage.content ?? ''}
+\`\`\`
+          `),
+          isHTML: true,
+          value: functionMessage,
+
+          hide: true
+        }
+      ]
+
+      appendToMessages(role, message, functionCall)
+      sendWithFunctionCall()
+    }
   }
 })
 
