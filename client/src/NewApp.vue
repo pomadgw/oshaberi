@@ -71,8 +71,8 @@ const appendToMessages = (
     ...messages.value,
     {
       user: role as string,
-      message: role === 'user' ? theMessage : marked.parse(theMessage),
-      isHTML: role !== 'user',
+      message: marked.parse(theMessage),
+      isHTML: true,
       value: {
         name,
         function_call: functionCall,
