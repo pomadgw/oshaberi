@@ -61,8 +61,15 @@ export const useSavedMessages = defineStore('savedMessages', {
     selectChat(key: string) {
       this.selected = key
     },
+    removeKey(key: string) {
+      this.messages = Object.fromEntries(
+        Object.entries(this.messages).filter(([k]) => k !== key)
+      )
+    },
+    addKey(key: string) {
+      this.messages[key] = []
+    },
     setSelectedMessages(messages: ChatMessages<ChatCompletionRequestMessage>) {
-      console.log('setSelectedMessages', messages)
       this.messages[this.selected] = messages
     },
     addMessage(

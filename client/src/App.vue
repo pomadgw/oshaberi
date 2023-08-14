@@ -34,6 +34,8 @@ const messages = computed({
   }
 })
 
+const newKey = ref('')
+
 const clearChat = (): void => {
   messages.value = []
 }
@@ -241,7 +243,7 @@ const openSettings = (): void => {
 <template>
   <CSettings v-model:open="dialogOpen" />
   <CToast class="z-50" />
-  <div class="flex flex-col max-w-5xl m-auto h-screen">
+  <div class="flex flex-col max-w-[1200px] m-auto h-screen">
     <div class="navbar bg-base-100">
       <div class="flex-1">
         <a class="btn btn-ghost normal-case text-xl">oShaberi</a>
@@ -255,22 +257,69 @@ const openSettings = (): void => {
         </button>
       </div>
     </div>
-    <div class="p-4 md:p-8 flex flex-col flex-1">
-      <div class="flex-1">
-        <CChat
-          ref="cchatRef"
-          :messages="messages"
-          style="max-height: calc(100vh - 48px - 124px - 64px - 64px)"
+    <div class="flex flex-1 w-full gap-5 p-4 md:p-8">
+      <div class="py-4 w-72 flex flex-col gap-3">
+        <div class="ml-4 text-sm font-bold">Chat history</div>
+        <div
+          class="overflow-y-auto"
+          style="height: calc(100vh - 48px - 124px - 64px - 64px - 18px)"
+        >
+          <div
+            v-for="key in messageStore.getKeys"
+            :key="key"
+            class="flex gap-2"
+          >
+            <button
+              class="text-left hover:bg-purple-300 dark:hover:bg-purple-800 p-4 w-full rounded-lg"
+              :class="{
+                'bg-purple-300 dark:bg-purple-800':
+                  messageStore.selected === key
+              }"
+              @click="messageStore.selectChat(key)"
+            >
+              {{ key }}
+            </button>
+            <button
+              v-if="
+                messageStore.getKeys.length > 1 && messageStore.selected !== key
+              "
+              @click="messageStore.removeKey(key)"
+            >
+              x
+            </button>
+            <div v-else class="invisible">x</div>
+          </div>
+        </div>
+        <input v-model="newKey" class="input input-bordered" />
+        <button
+          class="btn"
+          @click="
+            () => {
+              messageStore.addKey(newKey)
+              newKey = ''
+            }
+          "
+        >
+          Add
+        </button>
+      </div>
+      <div class="flex flex-col h-full w-full">
+        <div class="flex-1">
+          <CChat
+            ref="cchatRef"
+            :messages="messages"
+            style="max-height: calc(100vh - 48px - 124px - 64px - 64px)"
+          />
+        </div>
+
+        <CChatInput
+          :token-count="currentMessageTokenLength"
+          :is-sending="chat.status.value === 'loading'"
+          class="mt-3"
+          @send-message="sendMessage"
+          @type="currentMessage = $event"
         />
       </div>
-
-      <CChatInput
-        :token-count="currentMessageTokenLength"
-        :is-sending="chat.status.value === 'loading'"
-        class="mt-3"
-        @send-message="sendMessage"
-        @type="currentMessage = $event"
-      />
     </div>
   </div>
 </template>
