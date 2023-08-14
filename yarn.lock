@@ -933,6 +933,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4.14.197":
+  version: 4.14.197
+  resolution: "@types/lodash@npm:4.14.197"
+  checksum: 53d7567d1704de76cf33266c78062e0fd722d4b846e5b1417d0b6ef0ee41c0d9c451b92bc34f73d5f1fcc45c7d36511e92f6f47a9279b48157ba60a92ddaa078
+  languageName: node
+  linkType: hard
+
 "@types/marked@npm:^5.0.1":
   version: 5.0.1
   resolution: "@types/marked@npm:5.0.1"
@@ -5328,7 +5335,7 @@ __metadata:
     "@testing-library/user-event": ^14.4.3
     "@testing-library/vue": ^7.0.0
     "@types/dompurify": ^3.0.2
-    "@types/lodash": ^4
+    "@types/lodash": ^4.14.197
     "@types/marked": ^5.0.1
     "@types/testing-library__jest-dom": ^5
     "@typescript-eslint/eslint-plugin": ^5.52.0
@@ -5358,6 +5365,7 @@ __metadata:
     nodemon: ^3.0.1
     openai: ^3.3.0
     pinia: ^2.1.6
+    pinia-plugin-persistedstate: ^3.2.0
     postcss: ^8.4.27
     postcss-nested: ^6.0.1
     prettier: ^3.0.0
@@ -5574,6 +5582,15 @@ __metadata:
   version: 2.3.0
   resolution: "pify@npm:2.3.0"
   checksum: 9503aaeaf4577acc58642ad1d25c45c6d90288596238fb68f82811c08104c800e5a7870398e9f015d82b44ecbcbef3dc3d4251a1cbb582f6e5959fe09884b2ba
+  languageName: node
+  linkType: hard
+
+"pinia-plugin-persistedstate@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "pinia-plugin-persistedstate@npm:3.2.0"
+  peerDependencies:
+    pinia: ^2.0.0
+  checksum: c558b83cdd59e45956f328c34f0b067471dda122ed26555646107ebca5201d94c035ffaf3b400cae26020ad1be8978716f1f538653d6b90f23760c2f7ccbce82
   languageName: node
   linkType: hard
 

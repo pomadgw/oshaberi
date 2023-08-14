@@ -23,6 +23,7 @@
     "mitt": "^3.0.1",
     "openai": "^3.3.0",
     "pinia": "^2.1.6",
+    "pinia-plugin-persistedstate": "^3.2.0",
     "vue": "^3.3.4"
   },
   "devDependencies": {
@@ -32,7 +33,7 @@
     "@testing-library/user-event": "^14.4.3",
     "@testing-library/vue": "^7.0.0",
     "@types/dompurify": "^3.0.2",
-    "@types/lodash": "^4",
+    "@types/lodash": "^4.14.197",
     "@types/marked": "^5.0.1",
     "@types/testing-library__jest-dom": "^5",
     "@typescript-eslint/eslint-plugin": "^5.52.0",

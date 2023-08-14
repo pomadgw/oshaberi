@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { useStorage } from '@vueuse/core'
 import {
   type KeyedChatMessages,
   type ChatMessage,
@@ -41,17 +40,31 @@ export const useChatGPTSetting = defineStore('chatgptSettings', {
 })
 
 export const useSavedMessages = defineStore('savedMessages', {
-  state: () => ({
-    messages: useStorage<KeyedChatMessages<ChatCompletionRequestMessage>>(
-      'savedMessages',
-      {},
-      localStorage,
-      {
-        mergeDefaults: true // <--- needed
-      }
-    )
+  state: (): {
+    messages: KeyedChatMessages<ChatCompletionRequestMessage>
+    selected: string
+  } => ({
+    messages: {
+      default: []
+    },
+    selected: 'default'
   }),
+  getters: {
+    getKeys(): string[] {
+      return Object.keys(this.messages)
+    },
+    getSelected(): ChatMessages<ChatCompletionRequestMessage> {
+      return this.messages[this.selected]
+    }
+  },
   actions: {
+    selectChat(key: string) {
+      this.selected = key
+    },
+    setSelectedMessages(messages: ChatMessages<ChatCompletionRequestMessage>) {
+      console.log('setSelectedMessages', messages)
+      this.messages[this.selected] = messages
+    },
     addMessage(
       key: string,
       message: ChatMessage<ChatCompletionRequestMessage>
@@ -62,5 +75,6 @@ export const useSavedMessages = defineStore('savedMessages', {
 
       this.messages[key] = [...this.messages[key], message]
     }
-  }
+  },
+  persist: true
 })

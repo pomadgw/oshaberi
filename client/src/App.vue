@@ -12,15 +12,13 @@ import CToast from './components/CToast.vue'
 import CSettings from './components/CSettings.vue'
 
 import { type ChatMessages } from './lib/types/chat'
-import { type Ref, type ComputedRef, ref, watch, nextTick, computed } from 'vue'
+import { type ComputedRef, ref, watch, nextTick, computed } from 'vue'
 import useTokenCalculator, { tokenLength } from './hooks/useTokenCalculator'
 import { useChatGPTSetting, useSavedMessages } from './store'
 import clipboardEvent from './clipboard'
 import useLLM from './hooks/useLLM'
 import { marked } from 'marked'
 import useToast from './hooks/useToast'
-
-const DEFAULT_DATA = 'default'
 
 const { openToast } = useToast()
 
@@ -29,9 +27,10 @@ const messageStore = useSavedMessages()
 // const messages: Ref<ChatMessages<ChatCompletionRequestMessage>> = ref([])
 
 const messages = computed({
-  get: () => messageStore.messages[DEFAULT_DATA] ?? [],
+  get: () => messageStore.getSelected,
   set: (value: ChatMessages<ChatCompletionRequestMessage>) => {
-    messageStore.messages[DEFAULT_DATA] = value
+    console.log({ value })
+    messageStore.setSelectedMessages(value)
   }
 })
 
