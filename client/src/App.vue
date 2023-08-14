@@ -1,312 +1,267 @@
 <script setup lang="ts">
 import {
-  type CreateChatCompletionResponse,
-  type ChatCompletionResponseMessage,
-  type ChatCompletionRequestMessage,
-  type CreateChatCompletionRequest
+  type ChatCompletionResponseMessageRoleEnum,
+  type CreateChatCompletionRequest,
+  type ChatCompletionRequestMessageFunctionCall,
+  type ChatCompletionRequestMessage
 } from 'openai'
 
-import axios, { type AxiosResponse } from 'axios'
-import debounce from 'lodash/debounce'
-
-import CSettings from './components/CSettings.vue'
+import CChat from './components/Chat/CChat.vue'
+import CChatInput from './components/Chat/CChatInput.vue'
 import CToast from './components/CToast.vue'
-import CButton from './components/CButton.vue'
-import ChatBubble from './components/ChatBubble.vue'
-import { type ComputedRef, computed, ref, watch } from 'vue'
+import CSettings from './components/CSettings.vue'
+
+import { type ChatMessages } from './lib/types/chat'
+import { type Ref, type ComputedRef, ref, watch, nextTick, computed } from 'vue'
+import useTokenCalculator, { tokenLength } from './hooks/useTokenCalculator'
 import { useChatGPTSetting } from './store'
-import useLoading from './hooks/useLoading'
-
 import clipboardEvent from './clipboard'
+import useLLM from './hooks/useLLM'
+import { marked } from 'marked'
+import useToast from './hooks/useToast'
 
-const store = useChatGPTSetting()
+const { openToast } = useToast()
 
-const isToastOpen = ref(false)
-const toastText = ref('')
+const settingStore = useChatGPTSetting()
+const messages: Ref<ChatMessages<ChatCompletionRequestMessage>> = ref([])
 
-const dialogOpen = ref(false)
-
-const openSettings = (): void => {
-  dialogOpen.value = true
+const clearChat = (): void => {
+  messages.value = []
 }
 
-type ChatCompletion =
-  | ChatCompletionResponseMessage
-  | ChatCompletionRequestMessage
-
-const userMessage = ref('')
-const userMessages = ref<ChatCompletion[]>([])
-const userMessagesTokenLength = ref(0)
-
-const onSuccessCopy = (): void => {
-  toastText.value = 'Copied!'
-  isToastOpen.value = true
-}
-
-clipboardEvent.on('success', onSuccessCopy)
-
-const systemMessage: ComputedRef<ChatCompletionResponseMessage[]> = computed(
+const systemMessage: ComputedRef<ChatCompletionRequestMessage[]> = computed(
   () => {
-    return store.system !== ''
-      ? [{ role: 'system', content: store.system }]
+    return settingStore.system !== ''
+      ? [{ role: 'system', content: settingStore.system }]
       : []
   }
 )
 
-const clearChat = (): void => {
-  userMessages.value = []
+const messagesToSend = computed(() => {
+  return [
+    ...systemMessage.value,
+    ...(messages.value.map((message) => message.value) ?? [])
+  ]
+})
+
+const { tokenCount } = useTokenCalculator(messagesToSend)
+
+const currentMessage = ref('')
+const currentMessageTokenLength = computed(() => {
+  return (
+    (currentMessage.value === ''
+      ? 0
+      : tokenLength(
+          [
+            {
+              role: 'user',
+              content: currentMessage.value
+            }
+          ],
+          true
+        )) + tokenCount.value
+  )
+})
+
+const cchatRef = ref()
+
+const params: ComputedRef<CreateChatCompletionRequest> = computed(() => ({
+  model: settingStore.model,
+  messages: messagesToSend.value,
+  temperature: settingStore.temperature,
+  max_tokens:
+    settingStore.maxTokens === 0
+      ? undefined
+      : settingStore.maxTokens - tokenCount.value,
+  presence_penalty: settingStore.presencePenalty,
+  frequency_penalty: settingStore.frequencyPenalty
+}))
+
+const appendToMessages = (
+  role: ChatCompletionResponseMessageRoleEnum,
+  content: string,
+  functionCall?: ChatCompletionRequestMessageFunctionCall,
+  name?: string,
+  message?: string
+): void => {
+  const theMessage = message ?? content
+  messages.value = [
+    ...messages.value,
+    {
+      user: role as string,
+      message: theMessage,
+      isHTML: true,
+      value: {
+        name,
+        function_call: functionCall,
+        content,
+        role
+      }
+    }
+  ]
 }
 
-const { isLoading: isLoadingTokensLength, call: getTokensLength } = useLoading(
-  async (): Promise<void> => {
-    const result: AxiosResponse<{ tokens: number }> = await axios.post(
-      '/api/chat/tokens',
-      [
-        ...systemMessage.value,
-        ...userMessages.value,
+const { chat, chatFunc } = useLLM()
+const send = (isResend = false): void => {
+  const messageLength = messages.value.length
+
+  if (!isResend && messages.value[messageLength - 1].user !== 'user') {
+    messages.value = messages.value.slice(0, messageLength - 1)
+  }
+
+  chat.mutate(params.value)
+}
+
+const lastMessage = computed(() => {
+  return messages.value[messages.value.length - 1]
+})
+
+watch(chat.isSuccess, (value) => {
+  if (value) {
+    const data = chat.data?.value?.data
+
+    if (data != null) {
+      const content = data.choices[0].message?.content ?? ''
+      const role = data.choices[0].message?.role ?? 'assistant'
+      const functionCall = data.choices[0].message?.function_call
+
+      let message = content
+      if (functionCall != null) {
+        message = `
+${content ?? ''}
+
+**Calling \`${functionCall.name ?? '-'}\` with arguments:**
+
+\`\`\`json
+${functionCall.arguments ?? ''}
+\`\`\`
+    `.trim()
+      }
+
+      appendToMessages(role, content, functionCall, undefined, message)
+
+      sendWithFunctionCall()
+    }
+  }
+})
+
+watch(chat.isError, (isError) => {
+  if (isError) {
+    console.error(chat.error?.value)
+    const errorMessage =
+      chat.error?.value?.response?.data?.error.toString() ?? 'Unknown error'
+    openToast(`Error: ${errorMessage}`)
+  }
+})
+
+const sendWithFunctionCall = (): void => {
+  if (lastMessage.value.value.function_call != null) {
+    chatFunc.mutate(params.value)
+  }
+}
+
+watch(chatFunc.isSuccess, (value) => {
+  if (value) {
+    const data = chatFunc.data?.value?.data
+
+    if (data != null) {
+      const message = data.result.choices[0].message?.content ?? ''
+      const role = data.result.choices[0].message?.role ?? 'assistant'
+      const functionCall = data.result.choices[0].message?.function_call
+
+      const functionMessage = data.functionMessage
+
+      messages.value = [
+        ...messages.value,
         {
-          role: 'user',
-          content: userMessage.value
+          user: functionMessage.role as string,
+          message: marked.parse(`
+Function returned:
+
+\`\`\`
+${functionMessage.content ?? ''}
+\`\`\`
+          `),
+          isHTML: true,
+          value: functionMessage,
+
+          hide: true
         }
       ]
-    )
 
-    userMessagesTokenLength.value = result.data.tokens
+      appendToMessages(role, message, functionCall)
+      sendWithFunctionCall()
+    }
   }
-)
+})
 
-watch(
-  () => [...systemMessage.value, ...userMessages.value, userMessage.value],
-  debounce(async () => {
-    await getTokensLength()
-  }, 100)
-)
-
-// reversed to show latest message at the bottom
-const reversedUserMessages = computed(() =>
-  userMessages.value.slice().reverse()
-)
-
-const detectLanguage = async (text: string): Promise<string> => {
-  const result = await axios.post('/api/language', {
-    text
-  })
-
-  return result.data.language as string
+const sendMessage = (message: string): void => {
+  appendToMessages('user', message)
+  currentMessage.value = ''
+  send()
 }
 
-const reversedUserMessagesWithLanguages = ref<
-  Array<ChatCompletion & { lang: string }>
->([])
-
 watch(
-  reversedUserMessages,
+  messages,
   async () => {
-    reversedUserMessagesWithLanguages.value = reversedUserMessages.value.map(
-      (e: ChatCompletion) => {
-        return {
-          ...e,
-          lang: ''
-        }
-      }
-    )
+    if (cchatRef.value != null) {
+      await nextTick(() => {
+        const element = cchatRef.value.$el as HTMLElement
 
-    await Promise.all(
-      reversedUserMessagesWithLanguages.value.map(async (message) => {
-        const lang = await detectLanguage(message.content ?? '')
-        message.lang = lang
+        element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' })
       })
-    )
-
-    reversedUserMessagesWithLanguages.value = [
-      ...reversedUserMessagesWithLanguages.value
-    ]
+    }
   },
   {
     immediate: true
   }
 )
 
-const send = async (isResend = false): Promise<void> => {
-  if (!isResend) {
-    userMessages.value = [
-      ...userMessages.value,
-      {
-        role: 'user',
-        content: userMessage.value
-      }
-    ]
-    userMessage.value = ''
-  }
-
-  const messages: ChatCompletionResponseMessage[] = [
-    ...systemMessage.value,
-    ...userMessages.value
-  ]
-
-  const params: CreateChatCompletionRequest = {
-    model: store.model,
-    messages,
-    temperature: store.temperature,
-    max_tokens:
-      store.maxTokens === 0
-        ? undefined
-        : store.maxTokens - userMessagesTokenLength.value,
-    presence_penalty: store.presencePenalty,
-    frequency_penalty: store.frequencyPenalty
-  }
-
-  try {
-    let result: AxiosResponse<CreateChatCompletionResponse> = await axios.post(
-      '/api/chat',
-      params
-    )
-
-    if (result.data.choices.length === 0) {
-      return
-    }
-
-    let lastChoice = result.data.choices[0]
-
-    if (lastChoice.message != null) {
-      userMessages.value = [...userMessages.value, lastChoice.message]
-    }
-
-    while (true) {
-      if (
-        lastChoice.finish_reason === 'function_call' &&
-        lastChoice.message?.function_call != null
-      ) {
-        const messages: ChatCompletionResponseMessage[] = [
-          ...systemMessage.value,
-          ...userMessages.value
-        ]
-
-        result = await axios.post('/api/chat/function', { ...params, messages })
-
-        if (result.data.choices.length === 0) {
-          return
-        }
-
-        lastChoice = result.data.choices[0]
-
-        if (lastChoice.message != null) {
-          userMessages.value = [...userMessages.value, lastChoice.message]
-        }
-      } else {
-        break
-      }
-    }
-  } catch (err) {
-    console.error(err)
-    toastText.value = `Failed to send message: ${(err as Error).toString()}`
-    isToastOpen.value = true
-  }
+const onSuccessCopy = (): void => {
+  openToast('Copied!')
 }
 
-const { isLoading: isChatLoading, call: sendChat } = useLoading(send)
+clipboardEvent.on('success', onSuccessCopy)
 
-const resend = async (): Promise<void> => {
-  // remove last element if it's assitant message
-  if (userMessages.value[userMessages.value.length - 1].role === 'assistant') {
-    userMessages.value = userMessages.value.slice(0, -1)
-  }
-
-  await sendChat(true)
+const dialogOpen = ref(false)
+const openSettings = (): void => {
+  dialogOpen.value = true
 }
 </script>
 
 <template>
   <CSettings v-model:open="dialogOpen" />
-
-  <CToast v-model:open="isToastOpen" :text="toastText" />
-  <div class="max-w-7xl p-8 m-auto flex flex-col h-screen">
-    <div class="flex gap-3">
-      <c-button @click="openSettings">Open Settings</c-button>
-      <c-button @click="clearChat">Clear Chat</c-button>
+  <CToast class="z-50" />
+  <div class="flex flex-col max-w-5xl m-auto h-screen">
+    <div class="navbar bg-base-100">
+      <div class="flex-1">
+        <a class="btn btn-ghost normal-case text-xl">oShaberi</a>
+      </div>
+      <div class="navbar-end">
+        <button class="btn btn-ghost normal-case" @click="openSettings">
+          Settings
+        </button>
+        <button class="btn btn-ghost normal-case" @click="clearChat">
+          Clear chat
+        </button>
+      </div>
     </div>
-    <div class="flex flex-col py-6">
-      <div
-        class="inline-flex flex-col-reverse overflow-auto gap-4 mb-4 pr-3"
-        style="height: calc(100vh - 48px - 24px - 24px - 200px)"
-      >
-        <div>
-          <c-button
-            :disabled="isChatLoading || userMessages.length === 0"
-            :is-loading="isChatLoading"
-            @click="resend"
-            >Resend</c-button
-          >
-        </div>
-        <ChatBubble
-          v-for="(msg, index) in reversedUserMessagesWithLanguages"
-          :key="index"
-          :chat="msg"
+    <div class="p-4 md:p-8 flex flex-col flex-1">
+      <div class="flex-1">
+        <CChat
+          ref="cchatRef"
+          :messages="messages"
+          style="max-height: calc(100vh - 48px - 124px - 64px - 64px)"
         />
       </div>
-      <div class="flex-1 flex gap-4">
-        <div
-          :data-replicated-value="userMessage"
-          class="flex-1 grid grow-wrap after:max-h-[100px] after:border-blue-100 after:whitespace-pre-wrap after:invisible after:px-3 after:py-2 after:overflow-hidden"
-          @keyup="
-            (e) => {
-              if (e.key === 'Enter' && e.getModifierState('Control')) {
-                sendChat()
-                return
-              }
-            }
-          "
-        >
-          <textarea
-            v-model="userMessage"
-            class="w-full max-h-[100px] rounded-md border border-blue-100 outline-blue-200 px-3 py-2 resize-none"
-          ></textarea>
-          <div>
-            <span class="text-xs text-gray-400"
-              >Press Ctrl + Enter to send.</span
-            >&nbsp;
-            <span v-if="isLoadingTokensLength" class="text-xs text-gray-400">
-              Calculating tokens length...
-            </span>
-            <span v-else class="text-xs text-gray-400"
-              >Current tokens length: {{ userMessagesTokenLength }}</span
-            >
-          </div>
-        </div>
-        <c-button
-          :disabled="isChatLoading"
-          :is-loading="isChatLoading"
-          @click="sendChat"
-          >Send</c-button
-        >
-      </div>
+
+      <CChatInput
+        :token-count="currentMessageTokenLength"
+        :is-sending="chat.status.value === 'loading'"
+        class="mt-3"
+        @send-message="sendMessage"
+        @type="currentMessage = $event"
+      />
     </div>
   </div>
 </template>
-
-<style scoped>
-.grow-wrap::after {
-  /* Note the weird space! Needed to preventy jumpy behavior */
-  content: attr(data-replicated-value) ' ';
-}
-
-.grow-wrap > textarea,
-.grow-wrap::after {
-  /* Identical styling required!! */
-  /* Place on top of each other */
-  grid-area: 1 / 1 / 2 / 2;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
