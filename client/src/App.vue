@@ -30,7 +30,7 @@ const messages = computed({
   get: () => messageStore.getSelected,
   set: (value: ChatMessages<ChatCompletionRequestMessage>) => {
     console.log({ value })
-    messageStore.setSelectedMessages(value)
+    messageStore.setMessagesToSelectedSession(value)
   }
 })
 
@@ -265,7 +265,7 @@ const openSettings = (): void => {
           style="height: calc(100vh - 48px - 124px - 64px - 64px - 18px)"
         >
           <div
-            v-for="key in messageStore.getKeys"
+            v-for="key in messageStore.getSessions"
             :key="key"
             class="flex gap-2"
           >
@@ -273,17 +273,18 @@ const openSettings = (): void => {
               class="text-left hover:bg-purple-300 dark:hover:bg-purple-800 p-4 w-full rounded-lg"
               :class="{
                 'bg-purple-300 dark:bg-purple-800':
-                  messageStore.selected === key
+                  messageStore.selectedSession === key
               }"
-              @click="messageStore.selectChat(key)"
+              @click="messageStore.selectSession(key)"
             >
               {{ key }}
             </button>
             <button
               v-if="
-                messageStore.getKeys.length > 1 && messageStore.selected !== key
+                messageStore.getSessions.length > 1 &&
+                messageStore.selectedSession !== key
               "
-              @click="messageStore.removeKey(key)"
+              @click="messageStore.removeSession(key)"
             >
               x
             </button>
@@ -295,7 +296,7 @@ const openSettings = (): void => {
           class="btn"
           @click="
             () => {
-              messageStore.addKey(newKey)
+              messageStore.addNewSession(newKey)
               newKey = ''
             }
           "

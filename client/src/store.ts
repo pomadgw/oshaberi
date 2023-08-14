@@ -42,45 +42,47 @@ export const useChatGPTSetting = defineStore('chatgptSettings', {
 export const useSavedMessages = defineStore('savedMessages', {
   state: (): {
     messages: KeyedChatMessages<ChatCompletionRequestMessage>
-    selected: string
+    selectedSession: string
   } => ({
     messages: {
       default: []
     },
-    selected: 'default'
+    selectedSession: 'default'
   }),
   getters: {
-    getKeys(): string[] {
+    getSessions(): string[] {
       return Object.keys(this.messages)
     },
     getSelected(): ChatMessages<ChatCompletionRequestMessage> {
-      return this.messages[this.selected]
+      return this.messages[this.selectedSession]
     }
   },
   actions: {
-    selectChat(key: string) {
-      this.selected = key
+    selectSession(session: string) {
+      this.selectedSession = session
     },
-    removeKey(key: string) {
+    removeSession(session: string) {
       this.messages = Object.fromEntries(
-        Object.entries(this.messages).filter(([k]) => k !== key)
+        Object.entries(this.messages).filter(([k]) => k !== session)
       )
     },
-    addKey(key: string) {
+    addNewSession(key: string) {
       this.messages[key] = []
     },
-    setSelectedMessages(messages: ChatMessages<ChatCompletionRequestMessage>) {
-      this.messages[this.selected] = messages
+    setMessagesToSelectedSession(
+      messages: ChatMessages<ChatCompletionRequestMessage>
+    ) {
+      this.messages[this.selectedSession] = messages
     },
     addMessage(
-      key: string,
+      session: string,
       message: ChatMessage<ChatCompletionRequestMessage>
     ) {
-      if (this.messages[key] == null) {
-        this.messages[key] = []
+      if (this.messages[session] == null) {
+        this.messages[session] = []
       }
 
-      this.messages[key] = [...this.messages[key], message]
+      this.messages[session] = [...this.messages[session], message]
     }
   },
   persist: true
