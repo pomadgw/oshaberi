@@ -7,3 +7,4 @@ export interface ChatMessage<T> {
 }
 
 export type ChatMessages<T> = Array<ChatMessage<T>>
+export type KeyedChatMessages<T> = Record<string, ChatMessages<T>>

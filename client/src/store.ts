@@ -1,4 +1,11 @@
 import { defineStore } from 'pinia'
+import { useStorage } from '@vueuse/core'
+import {
+  type KeyedChatMessages,
+  type ChatMessage,
+  type ChatMessages
+} from './lib/types/chat'
+import { type ChatCompletionRequestMessage } from 'openai'
 
 type Model = 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-4'
 const supportedModels: Model[] = ['gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'gpt-4']
@@ -29,6 +36,31 @@ export const useChatGPTSetting = defineStore('chatgptSettings', {
       }
 
       this.model = model as Model
+    }
+  }
+})
+
+export const useSavedMessages = defineStore('savedMessages', {
+  state: () => ({
+    messages: useStorage<KeyedChatMessages<ChatCompletionRequestMessage>>(
+      'savedMessages',
+      {},
+      localStorage,
+      {
+        mergeDefaults: true // <--- needed
+      }
+    )
+  }),
+  actions: {
+    addMessage(
+      key: string,
+      message: ChatMessage<ChatCompletionRequestMessage>
+    ) {
+      if (this.messages[key] == null) {
+        this.messages[key] = []
+      }
+
+      this.messages[key] = [...this.messages[key], message]
     }
   }
 })

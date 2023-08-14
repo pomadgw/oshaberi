@@ -14,16 +14,26 @@ import CSettings from './components/CSettings.vue'
 import { type ChatMessages } from './lib/types/chat'
 import { type Ref, type ComputedRef, ref, watch, nextTick, computed } from 'vue'
 import useTokenCalculator, { tokenLength } from './hooks/useTokenCalculator'
-import { useChatGPTSetting } from './store'
+import { useChatGPTSetting, useSavedMessages } from './store'
 import clipboardEvent from './clipboard'
 import useLLM from './hooks/useLLM'
 import { marked } from 'marked'
 import useToast from './hooks/useToast'
 
+const DEFAULT_DATA = 'default'
+
 const { openToast } = useToast()
 
 const settingStore = useChatGPTSetting()
-const messages: Ref<ChatMessages<ChatCompletionRequestMessage>> = ref([])
+const messageStore = useSavedMessages()
+// const messages: Ref<ChatMessages<ChatCompletionRequestMessage>> = ref([])
+
+const messages = computed({
+  get: () => messageStore.messages[DEFAULT_DATA] ?? [],
+  set: (value: ChatMessages<ChatCompletionRequestMessage>) => {
+    messageStore.messages[DEFAULT_DATA] = value
+  }
+})
 
 const clearChat = (): void => {
   messages.value = []
