@@ -13,7 +13,7 @@ import CSettings from './components/CSettings.vue'
 
 import { type ChatMessages } from './lib/types/chat'
 import { type Ref, type ComputedRef, ref, watch, nextTick, computed } from 'vue'
-import useTokenCalculator from './hooks/useTokenCalculator'
+import useTokenCalculator, { tokenLength } from './hooks/useTokenCalculator'
 import { useChatGPTSetting } from './store'
 import clipboardEvent from './clipboard'
 import useLLM from './hooks/useLLM'
@@ -45,6 +45,24 @@ const messagesToSend = computed(() => {
 })
 
 const { tokenCount } = useTokenCalculator(messagesToSend)
+
+const currentMessage = ref('')
+const currentMessageTokenLength = computed(() => {
+  return (
+    (currentMessage.value === ''
+      ? 0
+      : tokenLength(
+          [
+            {
+              role: 'user',
+              content: currentMessage.value
+            }
+          ],
+          true
+        )) + tokenCount.value
+  )
+})
+
 const cchatRef = ref()
 
 const params: ComputedRef<CreateChatCompletionRequest> = computed(() => ({
@@ -71,7 +89,7 @@ const appendToMessages = (
     ...messages.value,
     {
       user: role as string,
-      message: marked.parse(theMessage),
+      message: theMessage,
       isHTML: true,
       value: {
         name,
@@ -179,6 +197,7 @@ ${functionMessage.content ?? ''}
 
 const sendMessage = (message: string): void => {
   appendToMessages('user', message)
+  currentMessage.value = ''
   send()
 }
 
@@ -237,10 +256,11 @@ const openSettings = (): void => {
       </div>
 
       <CChatInput
-        :token-count="tokenCount"
+        :token-count="currentMessageTokenLength"
         :is-sending="chat.status.value === 'loading'"
         class="mt-3"
         @send-message="sendMessage"
+        @type="currentMessage = $event"
       />
     </div>
   </div>

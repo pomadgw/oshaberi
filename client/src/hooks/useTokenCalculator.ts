@@ -6,14 +6,19 @@ import { type ChatCompletionRequestMessage } from 'openai'
 // Load the tokenizer which is designed to work with the embedding model
 const tokenizer = get_encoding('cl100k_base')
 
-function tokenLength(
-  messages: string | ChatCompletionRequestMessage[]
+export function tokenLength(
+  messages: string | ChatCompletionRequestMessage[],
+  calculateSingleMessage = false
 ): number {
   if (typeof messages === 'string') {
     return tokenizer.encode(messages).length
   }
 
   const tokensPerMessage = 4
+
+  if (calculateSingleMessage) {
+    return tokensPerMessage + tokenizer.encode(messages[0].content ?? '').length
+  }
 
   let totalTokens = 0
 

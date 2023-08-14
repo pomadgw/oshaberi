@@ -1,5 +1,6 @@
 <!-- prettier-ignore -->
 <script setup lang="ts" generic="T">
+import { marked } from 'marked'
 import { type ChatMessage } from '../../lib/types/chat'
 
 defineProps<{
@@ -28,7 +29,7 @@ defineProps<{
           </button>
         </div>
         <div class="marked max-w-full overflow-x-auto">
-          <div v-if="message.isHTML" v-html="message.message" />
+          <div v-if="message.isHTML" v-html="marked.parse(message.message)" />
           <p v-else>{{ message.message }}</p>
         </div>
       </div>

@@ -13,7 +13,10 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits<(e: 'sendMessage', value: string) => void>()
+const emit = defineEmits<{
+  (e: 'sendMessage', value: string): void
+  (e: 'type', value: string): void
+}>()
 
 const userMessage = ref('')
 
@@ -39,6 +42,7 @@ const sendMessage = (): void => {
       <textarea
         v-model="userMessage"
         class="w-full max-h-[100px] textarea textarea-bordered"
+        @keyup="() => emit('type', userMessage)"
       ></textarea>
       <div>
         <span class="text-xs text-gray-400 hidden md:inline-block"
