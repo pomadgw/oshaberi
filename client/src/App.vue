@@ -14,7 +14,7 @@ import CSettings from './components/CSettings.vue'
 import { type ChatMessages } from './lib/types/chat'
 import { type ComputedRef, ref, watch, nextTick, computed } from 'vue'
 import useTokenCalculator, { tokenLength } from './hooks/useTokenCalculator'
-import { useChatGPTSetting, useSavedMessages } from './store'
+import { useChatGPTSetting, useChatSession } from './store'
 import clipboardEvent from './clipboard'
 import useLLM from './hooks/useLLM'
 import { marked } from 'marked'
@@ -23,11 +23,10 @@ import useToast from './hooks/useToast'
 const { openToast } = useToast()
 
 const settingStore = useChatGPTSetting()
-const messageStore = useSavedMessages()
-// const messages: Ref<ChatMessages<ChatCompletionRequestMessage>> = ref([])
+const messageStore = useChatSession()
 
 const messages = computed({
-  get: () => messageStore.getSelected.messages,
+  get: () => messageStore.getSelectedSession.messages,
   set: (value: ChatMessages<ChatCompletionRequestMessage>) => {
     console.log({ value })
     messageStore.setMessagesToSelectedSession(value)

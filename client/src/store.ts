@@ -46,7 +46,7 @@ interface SessionStore {
   selectedSession: string
 }
 
-export const useSavedMessages = defineStore('savedMessages', {
+export const useChatSession = defineStore('chatSessions', {
   state: (): SessionStore => ({
     sessions: {
       default: {
@@ -60,11 +60,11 @@ export const useSavedMessages = defineStore('savedMessages', {
     getSessions(): string[] {
       return Object.keys(this.sessions)
     },
-    getSelected(): ChatSession {
+    getSelectedSession(): ChatSession {
       return this.sessions[this.selectedSession]
     },
     getCurrentSystemMessage(): string {
-      return this.getSelected.systemMessage
+      return this.getSelectedSession.systemMessage
     }
   },
   actions: {
