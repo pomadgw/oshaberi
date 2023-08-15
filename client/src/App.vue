@@ -238,6 +238,16 @@ const dialogOpen = ref(false)
 const openSettings = (): void => {
   dialogOpen.value = true
 }
+
+const historyDialog = ref<HTMLDialogElement>()
+
+const openHistory = (): void => {
+  historyDialog.value?.showModal()
+}
+
+const closeHistory = (): void => {
+  historyDialog.value?.close()
+}
 </script>
 
 <template>
@@ -249,6 +259,9 @@ const openSettings = (): void => {
         <a class="btn btn-ghost normal-case text-xl">oShaberi</a>
       </div>
       <div class="navbar-end">
+        <button class="btn btn-ghost normal-case" @click="openHistory">
+          History
+        </button>
         <button class="btn btn-ghost normal-case" @click="openSettings">
           Settings
         </button>
@@ -258,52 +271,59 @@ const openSettings = (): void => {
       </div>
     </div>
     <div class="flex flex-1 w-full gap-5 p-4 md:p-8">
-      <div class="py-4 w-72 flex flex-col gap-3">
-        <div class="ml-4 text-sm font-bold">Chat history</div>
-        <div
-          class="overflow-y-auto"
-          style="height: calc(100vh - 48px - 124px - 64px - 64px - 18px)"
+      <dialog ref="historyDialog" class="z-50 modal modal-middle">
+        <form
+          method="dialog"
+          class="flex flex-col gap-3 p-4 border rounded-md modal-box"
+          style="background-color: hsl(var(--b1) / var(--tw-bg-opacity, 1))"
         >
+          <div class="ml-4 text-sm font-bold">Chat history</div>
           <div
-            v-for="key in messageStore.getSessions"
-            :key="key"
-            class="flex gap-2"
+            class="overflow-y-auto"
+            style="height: calc(100vh - 48px - 124px - 64px - 64px - 18px)"
           >
-            <button
-              class="text-left hover:bg-purple-300 dark:hover:bg-purple-800 p-4 w-full rounded-lg"
-              :class="{
-                'bg-purple-300 dark:bg-purple-800':
-                  messageStore.selectedSession === key
-              }"
-              @click="messageStore.selectSession(key)"
+            <div
+              v-for="key in messageStore.getSessions"
+              :key="key"
+              class="flex gap-2"
             >
-              {{ key }}
-            </button>
-            <button
-              v-if="
-                messageStore.getSessions.length > 1 &&
-                messageStore.selectedSession !== key
-              "
-              @click="messageStore.removeSession(key)"
-            >
-              x
-            </button>
-            <div v-else class="invisible">x</div>
+              <button
+                class="text-left hover:bg-purple-300 dark:hover:bg-purple-800 p-4 w-full rounded-lg"
+                :class="{
+                  'bg-purple-300 dark:bg-purple-800':
+                    messageStore.selectedSession === key
+                }"
+                @click="messageStore.selectSession(key)"
+              >
+                {{ key }}
+              </button>
+              <button
+                v-if="
+                  messageStore.getSessions.length > 1 &&
+                  messageStore.selectedSession !== key
+                "
+                @click="messageStore.removeSession(key)"
+              >
+                x
+              </button>
+              <div v-else class="invisible">x</div>
+            </div>
           </div>
-        </div>
-        <input v-model="newKey" class="input input-bordered" />
-        <button
-          class="btn"
-          @click="
-            () => {
-              messageStore.addNewSession(newKey)
-              newKey = ''
-            }
-          "
-        >
-          Add
-        </button>
-      </div>
+          <input v-model="newKey" class="input input-bordered" />
+          <button
+            class="btn btn-primary"
+            @click="
+              () => {
+                messageStore.addNewSession(newKey)
+                newKey = ''
+              }
+            "
+          >
+            Add
+          </button>
+          <button class="btn" @click="closeHistory">Close</button>
+        </form>
+      </dialog>
       <div class="flex flex-col h-full w-full">
         <div class="flex-1">
           <CChat
