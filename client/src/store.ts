@@ -1,9 +1,5 @@
 import { defineStore } from 'pinia'
-import {
-  type KeyedChatMessages,
-  type ChatMessage,
-  type ChatMessages
-} from './lib/types/chat'
+import { type ChatMessage, type ChatMessages } from './lib/types/chat'
 import { type ChatCompletionRequestMessage } from 'openai'
 
 type Model = 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-4'
@@ -40,50 +36,68 @@ export const useChatGPTSetting = defineStore('chatgptSettings', {
   persist: true
 })
 
+interface ChatSession {
+  systemMessage: string
+  messages: ChatMessages<ChatCompletionRequestMessage>
+}
+
+interface SessionStore {
+  sessions: Record<string, ChatSession>
+  selectedSession: string
+}
+
 export const useSavedMessages = defineStore('savedMessages', {
-  state: (): {
-    messages: KeyedChatMessages<ChatCompletionRequestMessage>
-    selectedSession: string
-  } => ({
-    messages: {
-      default: []
+  state: (): SessionStore => ({
+    sessions: {
+      default: {
+        systemMessage: '',
+        messages: []
+      }
     },
     selectedSession: 'default'
   }),
   getters: {
     getSessions(): string[] {
-      return Object.keys(this.messages)
+      return Object.keys(this.sessions)
     },
-    getSelected(): ChatMessages<ChatCompletionRequestMessage> {
-      return this.messages[this.selectedSession]
+    getSelected(): ChatSession {
+      return this.sessions[this.selectedSession]
+    },
+    getCurrentSystemMessage(): string {
+      return this.getSelected.systemMessage
     }
   },
   actions: {
+    setCurrentSystemMessage(message: string) {
+      this.sessions[this.selectedSession].systemMessage = message
+    },
     selectSession(session: string) {
       this.selectedSession = session
     },
     removeSession(session: string) {
-      this.messages = Object.fromEntries(
-        Object.entries(this.messages).filter(([k]) => k !== session)
+      this.sessions = Object.fromEntries(
+        Object.entries(this.sessions).filter(([k]) => k !== session)
       )
     },
     addNewSession(key: string) {
-      this.messages[key] = []
+      this.sessions[key] = {
+        systemMessage: '',
+        messages: []
+      }
     },
     setMessagesToSelectedSession(
       messages: ChatMessages<ChatCompletionRequestMessage>
     ) {
-      this.messages[this.selectedSession] = messages
+      this.sessions[this.selectedSession].messages = messages
     },
     addMessage(
       session: string,
       message: ChatMessage<ChatCompletionRequestMessage>
     ) {
-      if (this.messages[session] == null) {
-        this.messages[session] = []
-      }
-
-      this.messages[session] = [...this.messages[session], message]
+      this.sessions[session].messages = [
+        ...this.sessions[session].messages,
+        message
+      ]
     }
   },
   persist: true

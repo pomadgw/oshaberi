@@ -68,16 +68,6 @@ watch(
         </div>
         <div class="form-control w-full">
           <div class="label">
-            <p class="label-text">System</p>
-            <p class="label-text-alt">Use this to direct the dialogs</p>
-          </div>
-          <textarea
-            v-model="store.system"
-            class="w-full min-h-[200px] textarea textarea-bordered"
-          ></textarea>
-        </div>
-        <div class="form-control w-full">
-          <div class="label">
             <p class="label-text">Temperature</p>
             <p class="label-text-alt">
               The higher the temperature, the crazier the text

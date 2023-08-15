@@ -27,7 +27,7 @@ const messageStore = useSavedMessages()
 // const messages: Ref<ChatMessages<ChatCompletionRequestMessage>> = ref([])
 
 const messages = computed({
-  get: () => messageStore.getSelected,
+  get: () => messageStore.getSelected.messages,
   set: (value: ChatMessages<ChatCompletionRequestMessage>) => {
     console.log({ value })
     messageStore.setMessagesToSelectedSession(value)
@@ -42,8 +42,8 @@ const clearChat = (): void => {
 
 const systemMessage: ComputedRef<ChatCompletionRequestMessage[]> = computed(
   () => {
-    return settingStore.system !== ''
-      ? [{ role: 'system', content: settingStore.system }]
+    return messageStore.getCurrentSystemMessage !== ''
+      ? [{ role: 'system', content: messageStore.getCurrentSystemMessage }]
       : []
   }
 )
@@ -248,6 +248,16 @@ const openHistory = (): void => {
 const closeHistory = (): void => {
   historyDialog.value?.close()
 }
+
+const systemMessageDialog = ref<HTMLDialogElement>()
+
+const openSystemMessage = (): void => {
+  systemMessageDialog.value?.showModal()
+}
+
+const closeSystemMessage = (): void => {
+  systemMessageDialog.value?.close()
+}
 </script>
 
 <template>
@@ -264,6 +274,9 @@ const closeHistory = (): void => {
         </button>
         <button class="btn btn-ghost normal-case" @click="openSettings">
           Settings
+        </button>
+        <button class="btn btn-ghost normal-case" @click="openSystemMessage">
+          System message
         </button>
         <button class="btn btn-ghost normal-case" @click="clearChat">
           Clear chat
@@ -322,6 +335,36 @@ const closeHistory = (): void => {
             Add
           </button>
           <button class="btn" @click="closeHistory">Close</button>
+        </form>
+      </dialog>
+      <dialog ref="systemMessageDialog" class="z-50 modal modal-middle">
+        <form
+          method="dialog"
+          class="flex flex-col gap-3 p-4 border rounded-md modal-box"
+          style="background-color: hsl(var(--b1) / var(--tw-bg-opacity, 1))"
+        >
+          <div class="form-control w-full">
+            <div class="label">
+              <p class="label-text">System</p>
+              <p class="label-text-alt">Use this to direct the dialogs</p>
+            </div>
+            <textarea
+              class="w-full min-h-[200px] textarea textarea-bordered"
+              @keyup="
+                (e) => {
+                  if (e.target != null) {
+                    messageStore.setCurrentSystemMessage(
+                      (e.target as HTMLTextAreaElement).value
+                    )
+                  }
+                }
+              "
+            ></textarea>
+          </div>
+
+          <button class="btn btn-primary" @click="closeSystemMessage">
+            Close
+          </button>
         </form>
       </dialog>
       <div class="flex flex-col h-full w-full">
