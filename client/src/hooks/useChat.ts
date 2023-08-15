@@ -60,8 +60,18 @@ export default function useChat() {
   const send = (isResend = false): void => {
     const messageLength = messages.value.length
 
-    if (!isResend && messages.value[messageLength - 1].user !== 'user') {
-      messages.value = messages.value.slice(0, messageLength - 1)
+    if (isResend) {
+      // messages.value = messages.value.slice(0, messageLength - 1)
+      // remove messages with non user role from end of array until
+      // we reach the last user message
+
+      for (let i = messageLength - 1; i >= 0; i--) {
+        if (messages.value[i].user === 'user') {
+          break
+        } else {
+          messages.value = messages.value.slice(0, i)
+        }
+      }
     }
 
     chat.mutate(params.value)
@@ -161,6 +171,9 @@ ${functionMessage.content ?? ''}
     appendToMessages,
     send,
     isSendingChat: chat.isLoading,
-    sendMessage
+    sendMessage,
+    resend: () => {
+      send(true)
+    }
   }
 }

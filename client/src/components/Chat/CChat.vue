@@ -7,6 +7,14 @@ import CChatBubble from './CChatBubble.vue'
 const props = defineProps<{
   messages: ChatMessages<ChatCompletionResponseMessage>
 }>()
+
+const emit =
+  defineEmits<
+    (
+      e: 'updateMessage',
+      value: ChatMessages<ChatCompletionResponseMessage>
+    ) => void
+  >()
 </script>
 
 <template>
@@ -15,6 +23,14 @@ const props = defineProps<{
       v-for="(message, index) in props.messages"
       :key="index"
       :message="message"
+      @updateMessage="
+        (message) => {
+          const messageCopy = [...props.messages]
+          message.value.content = message.message
+          messageCopy[index] = message
+          emit('updateMessage', messageCopy)
+        }
+      "
     />
   </div>
 </template>

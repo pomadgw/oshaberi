@@ -20,7 +20,7 @@ const { messages, clearChat, currentMessage, currentMessageTokenLength } =
 
 const newSession = ref('')
 
-const { cchatRef, sendMessage, isSendingChat } = useChat()
+const { cchatRef, sendMessage, isSendingChat, resend } = useChat()
 
 watch(
   messages,
@@ -183,8 +183,11 @@ const closeSystemMessage = (): void => {
             ref="cchatRef"
             :messages="messages"
             style="max-height: calc(100vh - 48px - 124px - 64px - 64px)"
+            @updateMessage="messages = $event"
           />
         </div>
+
+        <button class="btn" @click="resend">Resend Last Messages</button>
 
         <CChatInput
           :token-count="currentMessageTokenLength"
