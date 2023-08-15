@@ -36,7 +36,8 @@ export const useChatGPTSetting = defineStore('chatgptSettings', {
 
       this.model = model as Model
     }
-  }
+  },
+  persist: true
 })
 
 export const useSavedMessages = defineStore('savedMessages', {
