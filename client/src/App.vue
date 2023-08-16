@@ -160,6 +160,7 @@ const closeSystemMessage = (): void => {
             </div>
             <textarea
               class="w-full min-h-[200px] textarea textarea-bordered"
+              :value="messageStore.getCurrentSystemMessage"
               @keyup="
                 (e) => {
                   if (e.target != null) {
