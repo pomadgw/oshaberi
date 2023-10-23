@@ -2,7 +2,7 @@
 <script setup lang="ts" generic="T">
 import { marked } from 'marked'
 import { type ChatMessage } from '../../lib/types/chat'
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 const props =defineProps<{
   message: ChatMessage<T>
@@ -10,17 +10,23 @@ const props =defineProps<{
 
 const emit = defineEmits<(e: 'updateMessage', value: ChatMessage<T>) => void>()
 
-const messageValue = computed({
-  get: () => props.message.message,
-  set: (value) => {
-    emit('updateMessage', {
-      ...props.message,
-      message: value,
-    })
-  }
-})
-
+// eslint-disable-next-line vue/no-setup-props-destructure
+const messageValue = ref(props.message.message)
 const editMode = ref(false)
+
+const save = (): void => {
+  emit('updateMessage', {
+    ...props.message,
+    message: messageValue.value,
+  })
+  editMode.value = false
+}
+
+const cancel = (): void => {
+  messageValue.value = props.message.message
+  editMode.value = false
+}
+
 </script>
 
 <template>
@@ -32,11 +38,13 @@ const editMode = ref(false)
       }"
       class="chat w-full"
     >
-      <div class="chat-bubble">
+      <div :class="editMode ? 'w-full' : ''" class="chat-bubble">
         <div class="flex items-center gap-3">
           <div class="text-sm flex-1">{{ message.user }}</div>
 
-          <button @click="editMode = !editMode" class="text-xs">Edit</button>
+          <button v-if="!editMode" @click="editMode = true" class="text-xs">
+            Edit
+          </button>
 
           <button
             :data-clipboard-text="message.message"
@@ -46,12 +54,16 @@ const editMode = ref(false)
           </button>
         </div>
         <div class="marked max-w-full overflow-x-auto">
-          <template v-if="editMode">
+          <div v-if="editMode" class="flex flex-col gap-2">
             <textarea
               v-model="messageValue"
-              class="textarea textarea-bordered w-full"
+              class="textarea textarea-bordered w-full h-[200px]"
             ></textarea>
-          </template>
+            <div class="flex gap-3 justify-end">
+              <button class="btn btn-primary" @click="save">Save</button>
+              <button class="btn btn-secondary" @click="cancel">Cancel</button>
+            </div>
+          </div>
           <template v-else>
             <div v-if="message.isHTML" v-html="marked.parse(message.message)" />
             <p v-else>{{ message.message }}</p>
