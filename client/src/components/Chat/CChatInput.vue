@@ -48,7 +48,10 @@ const append = (): void => {
 }
 
 const sendMessage = (): void => {
-  emit('sendMessage', message.value)
+  emit('sendMessage', {
+    ...message.value,
+    role: 'user'
+  })
   userMessage.value = ''
 }
 </script>
