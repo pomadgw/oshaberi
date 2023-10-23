@@ -31,6 +31,13 @@ const emit =
           emit('updateMessage', messageCopy)
         }
       "
+      @deleteMessage="
+        () => {
+          const messageCopy = [...props.messages]
+          messageCopy.splice(index, 1)
+          emit('updateMessage', messageCopy)
+        }
+      "
     />
   </div>
 </template>

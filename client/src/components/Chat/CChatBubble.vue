@@ -8,7 +8,10 @@ const props =defineProps<{
   message: ChatMessage<T>
 }>()
 
-const emit = defineEmits<(e: 'updateMessage', value: ChatMessage<T>) => void>()
+const emit = defineEmits<{
+  (e: 'updateMessage', value: ChatMessage<T>): void
+  (e: 'deleteMessage'): void
+}>()
 
 // eslint-disable-next-line vue/no-setup-props-destructure
 const messageValue = ref(props.message.message)
@@ -19,6 +22,7 @@ const save = (): void => {
     ...props.message,
     message: messageValue.value,
   })
+
   editMode.value = false
 }
 
@@ -27,6 +31,11 @@ const cancel = (): void => {
   editMode.value = false
 }
 
+const deleteMessage = (): void => {
+  if (confirm('Are you sure you want to delete this message?')) {
+    emit('deleteMessage')
+  }
+}
 </script>
 
 <template>
@@ -44,6 +53,10 @@ const cancel = (): void => {
 
           <button v-if="!editMode" @click="editMode = true" class="text-xs">
             Edit
+          </button>
+
+          <button v-if="!editMode" @click="deleteMessage" class="text-xs">
+            Delete
           </button>
 
           <button
