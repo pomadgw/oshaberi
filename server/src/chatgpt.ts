@@ -59,10 +59,14 @@ export default function chatGptRouter(): express.Router {
 
   router.post('/', async (req, res) => {
     try {
-      const chatCompletion = await openai.createChatCompletion({
-        ...req.body,
-        functions
-      })
+      const { useFunction = true, ...body } = req.body
+      const params = {
+        ...body,
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        ...(useFunction ? { functions } : {})
+      }
+      console.log({ params, body: req.body })
+      const chatCompletion = await openai.createChatCompletion(params)
 
       res.json(chatCompletion.data)
     } catch (err) {
@@ -74,7 +78,11 @@ export default function chatGptRouter(): express.Router {
   })
 
   router.post('/function', async (req, res) => {
-    const body: CreateChatCompletionRequest = { ...req.body, functions }
+    const { useFunction: _, ...otherBody } = req.body
+    const body: CreateChatCompletionRequest = {
+      ...otherBody,
+      functions
+    }
 
     // get the last message
     const lastMessage = body.messages[body.messages.length - 1]

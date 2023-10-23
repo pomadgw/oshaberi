@@ -68,6 +68,21 @@ watch(
         </div>
         <div class="form-control w-full">
           <div class="label">
+            <p class="label-text">Use Function</p>
+            <p class="label-text-alt">Utilize functions for ChatGPT</p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <input
+              v-model="store.useFunction"
+              type="checkbox"
+              class="checkbox"
+            />
+            {{ store.useFunction ? 'Enabled' : 'Disabled' }}
+          </div>
+        </div>
+        <div class="form-control w-full">
+          <div class="label">
             <p class="label-text">Temperature</p>
             <p class="label-text-alt">
               The higher the temperature, the crazier the text

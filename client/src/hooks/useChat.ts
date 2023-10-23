@@ -21,7 +21,9 @@ export default function useChat() {
 
   const { messages, messagesToSend, tokenCount, currentMessage } = useMessages()
 
-  const params: ComputedRef<CreateChatCompletionRequest> = computed(() => ({
+  const params: ComputedRef<
+    CreateChatCompletionRequest & { useFunction: boolean }
+  > = computed(() => ({
     model: settingStore.model,
     messages: messagesToSend.value,
     temperature: settingStore.temperature,
@@ -30,7 +32,8 @@ export default function useChat() {
         ? undefined
         : settingStore.maxTokens - tokenCount.value,
     presence_penalty: settingStore.presencePenalty,
-    frequency_penalty: settingStore.frequencyPenalty
+    frequency_penalty: settingStore.frequencyPenalty,
+    useFunction: settingStore.useFunction
   }))
 
   const appendToMessages = (

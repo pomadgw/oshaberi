@@ -16,7 +16,8 @@ export const useChatGPTSetting = defineStore('chatgptSettings', {
     model: 'gpt-3.5-turbo' as Model,
     presencePenalty: 0,
     frequencyPenalty: 0,
-    system: ''
+    system: '',
+    useFunction: false
   }),
   actions: {
     setTemperature(temperature: number) {
