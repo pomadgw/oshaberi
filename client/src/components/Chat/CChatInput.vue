@@ -30,9 +30,10 @@ const sendMessage = (): void => {
     <div
       :data-replicated-value="userMessage"
       class="flex-1 grid grow-wrap after:max-h-[100px] after:border-blue-100 after:whitespace-pre-wrap after:invisible after:px-3 after:py-2 after:overflow-hidden"
-      @keyup="
+      @keydown="
         (e) => {
-          if (e.key === 'Enter' && e.getModifierState('Control')) {
+          if (e.key === 'Enter' && !e.getModifierState('Shift')) {
+            e.preventDefault()
             sendMessage()
             return
           }
@@ -46,7 +47,7 @@ const sendMessage = (): void => {
       ></textarea>
       <div>
         <span class="text-xs text-gray-400 hidden md:inline-block"
-          >Press Ctrl + Enter to send.</span
+          >Press Enter to send. Press Shift+Enter to add newline.</span
         >&nbsp;
         <span class="text-xs text-gray-400"
           >Current tokens length: {{ tokenCount }}</span
