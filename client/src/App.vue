@@ -78,8 +78,12 @@ const closeSystemMessage = (): void => {
   <CToast class="z-50" />
   <div class="flex flex-col max-w-[1200px] m-auto h-screen">
     <div class="navbar bg-base-100">
-      <div class="flex-1">
+      <div>
         <a class="btn btn-ghost normal-case text-xl">oShaberi</a>
+      </div>
+      <div class="text-md flex gap-2 flex-1">
+        <span>Session:</span>
+        <span class="font-bold">{{ messageStore.selectedSession }}</span>
       </div>
       <div class="navbar-end">
         <button class="btn btn-ghost normal-case" @click="openHistory">
