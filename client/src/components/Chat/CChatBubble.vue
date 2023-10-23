@@ -4,7 +4,7 @@ import { marked } from 'marked'
 import { type ChatMessage } from '../../lib/types/chat'
 import { ref } from 'vue';
 
-const props =defineProps<{
+const props = defineProps<{
   message: ChatMessage<T>
 }>()
 
