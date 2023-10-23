@@ -10,8 +10,6 @@ marked.use({
       return `<blockquote class="border-l-4 border-blue-400 pl-4 text-gray-600">${quote}</blockquote>`
     },
     list(body, ordered, start) {
-      console.log(body, ordered, start)
-
       if (ordered) {
         return `<ol class="list-decimal ml-4" start="${start}">${body}</ol>`
       } else {
