@@ -20,7 +20,8 @@ const { messages, clearChat, currentMessage, currentMessageTokenLength } =
 
 const newSession = ref('')
 
-const { cchatRef, sendMessage, isSendingChat, resend } = useChat()
+const { cchatRef, sendMessage, isSendingChat, resend, appendToMessages } =
+  useChat()
 
 watch(
   messages,
@@ -43,6 +44,8 @@ const onSuccessCopy = (): void => {
 }
 
 clipboardEvent.on('success', onSuccessCopy)
+
+const insertMessageMode = ref(false)
 
 const dialogOpen = ref(false)
 const openSettings = (): void => {
@@ -191,11 +194,19 @@ const closeSystemMessage = (): void => {
         <button class="btn" @click="resend">Resend Last Messages</button>
 
         <CChatInput
+          :insertMessageMode="insertMessageMode"
           :token-count="currentMessageTokenLength"
           :is-sending="isSendingChat"
           class="mt-3"
           @send-message="sendMessage"
           @type="currentMessage = $event"
+          @edit="insertMessageMode = true"
+          @append="
+            (message) => {
+              appendToMessages(message.role, message.message)
+              insertMessageMode = false
+            }
+          "
         />
       </div>
     </div>

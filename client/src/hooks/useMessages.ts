@@ -1,6 +1,6 @@
 import { type ComputedRef, computed, ref } from 'vue'
 import { useChatSession } from '../store'
-import { type ChatMessages } from '../lib/types/chat'
+import { type Message, type ChatMessages } from '../lib/types/chat'
 import { type ChatCompletionRequestMessage } from 'openai'
 import useTokenCalculator, { tokenLength } from './useTokenCalculator'
 
@@ -11,7 +11,6 @@ export default function useMessages() {
   const messages = computed({
     get: () => messageStore.getSelectedSession.messages,
     set: (value: ChatMessages<ChatCompletionRequestMessage>) => {
-      console.log({ value })
       messageStore.setMessagesToSelectedSession(value)
     }
   })
@@ -37,16 +36,19 @@ export default function useMessages() {
 
   const { tokenCount } = useTokenCalculator(messagesToSend)
 
-  const currentMessage = ref('')
+  const currentMessage = ref<Message>()
   const currentMessageTokenLength = computed(() => {
+    const message = currentMessage.value
+    if (message == null) return 0
+
     return (
-      (currentMessage.value === ''
+      (message.message === ''
         ? 0
         : tokenLength(
             [
               {
-                role: 'user',
-                content: currentMessage.value
+                role: message.role ?? 'user',
+                content: message.message
               }
             ],
             true

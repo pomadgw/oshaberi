@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import CButton from '../CButton.vue'
+import { type ChatCompletionRequestMessageRoleEnum } from 'openai'
 
 const props = defineProps({
+  insertMessageMode: {
+    type: Boolean,
+    default: false
+  },
   isSending: {
     type: Boolean,
     default: false
@@ -14,14 +19,36 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{
-  (e: 'sendMessage', value: string): void
-  (e: 'type', value: string): void
+  (
+    e: 'sendMessage',
+    value: { message: string; role: ChatCompletionRequestMessageRoleEnum }
+  ): void
+  (
+    e: 'type',
+    value: { message: string; role: ChatCompletionRequestMessageRoleEnum }
+  ): void
+  (
+    e: 'append',
+    value: { message: string; role: ChatCompletionRequestMessageRoleEnum }
+  ): void
+  (e: 'edit'): void
 }>()
 
 const userMessage = ref('')
+const role = ref<ChatCompletionRequestMessageRoleEnum>('user')
+
+const message = computed(() => ({
+  message: userMessage.value,
+  role: role.value
+}))
+
+const append = (): void => {
+  emit('append', message.value)
+  userMessage.value = ''
+}
 
 const sendMessage = (): void => {
-  emit('sendMessage', userMessage.value)
+  emit('sendMessage', message.value)
   userMessage.value = ''
 }
 </script>
@@ -43,7 +70,7 @@ const sendMessage = (): void => {
       <textarea
         v-model="userMessage"
         class="w-full max-h-[100px] textarea textarea-bordered"
-        @keyup="() => emit('type', userMessage)"
+        @keyup="() => emit('type', message)"
       ></textarea>
       <div>
         <span class="text-xs text-gray-400 hidden md:inline-block"
@@ -54,12 +81,23 @@ const sendMessage = (): void => {
         >
       </div>
     </div>
-    <c-button
-      :disabled="props.isSending"
-      :is-loading="props.isSending"
-      @click="sendMessage"
-      >Send</c-button
-    >
+    <div v-if="insertMessageMode" class="flex flex-col gap-3">
+      <!-- role dropdown -->
+      <select v-model="role" class="select select-bordered">
+        <option value="user">user</option>
+        <option value="assistant">assistant</option>
+      </select>
+      <c-button @click="append">Save</c-button>
+    </div>
+    <div v-else class="flex flex-col gap-3">
+      <c-button
+        :disabled="props.isSending"
+        :is-loading="props.isSending"
+        @click="sendMessage"
+        >Send</c-button
+      >
+      <c-button @click="emit('edit')">Edit</c-button>
+    </div>
   </div>
 </template>
 

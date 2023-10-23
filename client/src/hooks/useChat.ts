@@ -9,6 +9,7 @@ import useMessages from './useMessages'
 import useLLM from './useLLM'
 import useToast from './useToast'
 import { marked } from 'marked'
+import { type Message } from '../lib/types/chat'
 
 // eslint-disable-next-line
 export default function useChat() {
@@ -160,9 +161,13 @@ ${functionMessage.content ?? ''}
     }
   })
 
-  const sendMessage = (message: string): void => {
-    appendToMessages('user', message)
-    currentMessage.value = ''
+  const sendMessage = ({ message, role = 'user' }: Message): void => {
+    appendToMessages(role, message)
+    currentMessage.value = {
+      message: '',
+      role
+    }
+
     send()
   }
 
