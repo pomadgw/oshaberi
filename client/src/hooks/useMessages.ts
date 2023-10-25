@@ -36,7 +36,11 @@ export default function useMessages() {
 
   const { tokenCount } = useTokenCalculator(messagesToSend)
 
-  const currentMessage = ref<Message>()
+  const currentMessage = ref<Message>({
+    message: '',
+    role: 'user'
+  })
+
   const currentMessageTokenLength = computed(() => {
     const message = currentMessage.value
     if (message == null) return 0
