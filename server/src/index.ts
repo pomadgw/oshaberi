@@ -10,6 +10,7 @@ import lingua from 'lingua-nodejs'
 import homeRouters from './home.js'
 import assetsRouters from './assets.js'
 import chatRouters from './chatgpt.js'
+import routers from './routers'
 
 if (process.env.NODE_ENV === 'production') {
   dotenv.config({
@@ -60,6 +61,8 @@ app.options(
 )
 
 app.use('/api/chat', chatRouters())
+
+app.use('/api/v2', routers)
 
 app.post('/api/language', (req, res) => {
   const { text } = req.body
