@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // emit click
-const props = defineProps<{
+defineProps<{
   disabled?: boolean
   isLoading?: boolean
 }>()
@@ -8,14 +8,15 @@ const emit = defineEmits<(e: 'click') => void>()
 </script>
 <template>
   <button
-    :disabled="props.disabled || props.isLoading"
+    :disabled="disabled || isLoading"
     :class="{
-      '!btn-disabled': props.disabled,
-      '!cursor-wait': props.isLoading
+      '!btn-disabled': disabled,
+      '!cursor-wait': isLoading
     }"
     class="btn btn-primary"
     @click="emit('click')"
   >
+    <span v-if="isLoading" class="loading loading-spinner"></span>
     <slot />
   </button>
 </template>
