@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import CButton from '../CButton.vue'
 import { type ChatCompletionRequestMessageRoleEnum } from 'openai'
+import { useChatGPTSetting } from 'client/src/store'
 
 const props = defineProps({
   insertMessageMode: {
@@ -41,6 +42,11 @@ const message = computed(() => ({
   message: userMessage.value,
   role: role.value
 }))
+
+const store = useChatGPTSetting()
+const isExceedingMaxSupportedTokens = computed(
+  () => props.tokenCount >= store.maxSupportedTokens
+)
 
 const append = (): void => {
   emit('append', message.value)
@@ -94,7 +100,7 @@ const sendMessage = (): void => {
     </div>
     <div v-else class="flex flex-col gap-3">
       <c-button
-        :disabled="props.isSending"
+        :disabled="props.isSending || isExceedingMaxSupportedTokens"
         :is-loading="props.isSending"
         @click="sendMessage"
         >Send</c-button

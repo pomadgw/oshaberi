@@ -2,8 +2,21 @@ import { defineStore } from 'pinia'
 import { type ChatMessage, type ChatMessages } from './lib/types/chat'
 import { type ChatCompletionRequestMessage } from 'openai'
 
-type Model = 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-4'
-const supportedModels: Model[] = ['gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'gpt-4']
+type Model =
+  | 'gpt-3.5-turbo'
+  | 'gpt-3.5-turbo-16k'
+  | 'gpt-3.5-turbo-1106'
+  | 'gpt-4'
+  | 'gpt-4-turbo'
+  | 'gpt-4-1106-preview'
+export const supportedModels: Model[] = [
+  'gpt-3.5-turbo',
+  'gpt-3.5-turbo-16k',
+  'gpt-3.5-turbo-1106',
+  'gpt-4',
+  'gpt-4-turbo',
+  'gpt-4-1106-preview'
+]
 
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`
@@ -19,6 +32,30 @@ export const useChatGPTSetting = defineStore('chatgptSettings', {
     system: '',
     useFunction: false
   }),
+  getters: {
+    maxSupportedTokens(): number {
+      if (this.model === 'gpt-4-turbo' || this.model === 'gpt-4-1106-preview') {
+        return 128000
+      }
+
+      if (this.model === 'gpt-4') {
+        return 8192
+      }
+
+      if (
+        this.model === 'gpt-3.5-turbo-16k' ||
+        this.model === 'gpt-3.5-turbo-1106'
+      ) {
+        return 16384
+      }
+
+      if (this.model === 'gpt-3.5-turbo') {
+        return 4096
+      }
+
+      return 1024
+    }
+  },
   actions: {
     setTemperature(temperature: number) {
       this.temperature = temperature

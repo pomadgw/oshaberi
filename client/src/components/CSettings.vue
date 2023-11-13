@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import CButton from './CButton.vue'
 
-import { useChatGPTSetting } from '../store'
+import { supportedModels, useChatGPTSetting } from '../store'
 
 const props = defineProps<{
   open: boolean
@@ -11,18 +11,6 @@ const props = defineProps<{
 const emit = defineEmits<(e: 'update:open', value: boolean) => void>()
 
 const store = useChatGPTSetting()
-
-const supportedModels = ['gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'gpt-4']
-
-const maxTokensRange = computed(() => {
-  if (store.model === 'gpt-3.5-turbo-16k') {
-    return 16384
-  } else if (store.model === 'gpt-4') {
-    return 8192
-  }
-
-  return 4096
-})
 
 const dialog = ref<HTMLDialogElement>()
 
@@ -116,7 +104,7 @@ watch(
               v-model.number="store.maxTokens"
               type="range"
               min="0"
-              :max="maxTokensRange - 1"
+              :max="store.maxSupportedTokens - 1"
               step="1"
               class="range"
             />
