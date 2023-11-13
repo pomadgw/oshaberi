@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import CButton from '../CButton.vue'
 import { type ChatCompletionRequestMessageRoleEnum } from 'openai'
-import { useChatGPTSetting } from 'client/src/store'
+import { useChatGPTSetting } from '../../store'
 
 const props = defineProps({
   insertMessageMode: {
