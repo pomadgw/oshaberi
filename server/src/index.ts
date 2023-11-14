@@ -1,26 +1,26 @@
-import dotenv from 'dotenv'
+// import dotenv from 'dotenv'
 import path from 'path'
 
 import express from 'express'
 import cors from 'cors'
 
 // import { franc } from 'franc'
-import lingua from 'lingua-nodejs'
+// import lingua from 'lingua-nodejs'
 
 import homeRouters from './home.js'
 import assetsRouters from './assets.js'
 import chatRouters from './chatgpt.js'
 import routers from './routers'
 
-if (process.env.NODE_ENV === 'production') {
-  dotenv.config({
-    path: path.join(path.resolve(), '.env')
-  })
-} else {
-  dotenv.config({
-    path: path.join(path.resolve(), '../.env')
-  })
-}
+// if (process.env.NODE_ENV === 'production') {
+//   dotenv.config({
+//     path: path.join(path.resolve(), '.env')
+//   })
+// } else {
+//   dotenv.config({
+//     path: path.join(path.resolve(), '../.env')
+//   })
+// }
 
 const port = Number(process.env.PORT ?? 3000)
 const hostname = process.env.HOSTNAME ?? 'localhost'
@@ -64,12 +64,12 @@ app.use('/api/chat', chatRouters())
 
 app.use('/api/v2', routers)
 
-app.post('/api/language', (req, res) => {
-  const { text } = req.body
-  const language = lingua.detectLanguage(text)
+// app.post('/api/language', (req, res) => {
+//   const { text } = req.body
+//   const language = lingua.detectLanguage(text)
 
-  res.json({ language })
-})
+//   res.json({ language })
+// })
 
 app.use(homeRouters)
 
