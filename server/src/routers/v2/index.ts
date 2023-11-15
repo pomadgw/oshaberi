@@ -170,6 +170,7 @@ router.post('/query', upload.single('file'), async (req, res) => {
 
     const embeddings = new OpenAIEmbeddings()
 
+    console.log('Loading embeddings...')
     const vectorStore = await RedisVectorStore.fromDocuments(
       splitDocs,
       embeddings,
@@ -181,6 +182,7 @@ router.post('/query', upload.single('file'), async (req, res) => {
 
     getModel().modelName = modelName
 
+    console.log('Loading model...')
     const chain = RetrievalQAChain.fromLLM(
       getModel(),
       vectorStore.asRetriever()
