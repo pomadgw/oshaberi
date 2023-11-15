@@ -1,4 +1,4 @@
-// import dotenv from 'dotenv'
+import dotenv from 'dotenv'
 import path from 'path'
 
 import express from 'express'
@@ -12,15 +12,15 @@ import assetsRouters from './assets.js'
 import chatRouters from './chatgpt.js'
 import routers from './routers'
 
-// if (process.env.NODE_ENV === 'production') {
-//   dotenv.config({
-//     path: path.join(path.resolve(), '.env')
-//   })
-// } else {
-//   dotenv.config({
-//     path: path.join(path.resolve(), '../.env')
-//   })
-// }
+if (process.env.NODE_ENV === 'production') {
+  dotenv.config({
+    path: path.join(path.resolve(), '.env')
+  })
+} else {
+  dotenv.config({
+    path: path.join(path.resolve(), '../.env')
+  })
+}
 
 const port = Number(process.env.PORT ?? 3000)
 const hostname = process.env.HOSTNAME ?? 'localhost'
