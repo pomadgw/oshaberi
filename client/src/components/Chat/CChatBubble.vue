@@ -1,8 +1,9 @@
 <!-- prettier-ignore -->
 <script setup lang="ts" generic="T">
 import { marked } from 'marked'
-import { type ChatMessage } from '../../lib/types/chat'
 import { ref } from 'vue';
+
+import { type ChatMessage } from '../../lib/types/chat'
 
 const props = defineProps<{
   message: ChatMessage<T>

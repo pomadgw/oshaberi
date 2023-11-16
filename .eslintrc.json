@@ -23,7 +23,7 @@
     "extraFileExtensions": [".vue"]
   },
   "parser": "vue-eslint-parser",
-  "plugins": ["vue", "prettier"],
+  "plugins": ["vue", "prettier", "unused-imports"],
   "rules": {
     "prettier/prettier": "error",
     "unused-imports/no-unused-vars": [

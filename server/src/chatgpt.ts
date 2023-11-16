@@ -1,6 +1,5 @@
 import { type AxiosError } from 'axios'
 import express from 'express'
-
 import {
   type ChatCompletionRequestMessage,
   Configuration,

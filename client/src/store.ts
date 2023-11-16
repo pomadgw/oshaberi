@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-import { type ChatMessage, type ChatMessages } from './lib/types/chat'
 import { type ChatCompletionRequestMessage } from 'openai'
+
+import { type ChatMessage, type ChatMessages } from './lib/types/chat'
 
 type Model =
   | 'gpt-3.5-turbo'

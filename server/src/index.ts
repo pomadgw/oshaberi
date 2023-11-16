@@ -1,9 +1,8 @@
-import dotenv from 'dotenv'
 import path from 'path'
 
+import dotenv from 'dotenv'
 import express from 'express'
 import cors from 'cors'
-
 // import { franc } from 'franc'
 import lingua from 'lingua-nodejs'
 

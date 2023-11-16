@@ -1,14 +1,15 @@
 import { type ComputedRef, computed, ref, watch } from 'vue'
-import { useChatGPTSetting } from '../store'
 import {
   type CreateChatCompletionRequest,
   type ChatCompletionResponseMessageRoleEnum,
   type ChatCompletionRequestMessageFunctionCall
 } from 'openai'
+import { marked } from 'marked'
+
+import { useChatGPTSetting } from '../store'
 import useMessages from './useMessages'
 import useLLM from './useLLM'
 import useToast from './useToast'
-import { marked } from 'marked'
 import { type Message } from '../lib/types/chat'
 
 // eslint-disable-next-line

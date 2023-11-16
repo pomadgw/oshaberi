@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { ref, watch, nextTick } from 'vue'
+
 import CChat from './components/Chat/CChat.vue'
 import CChatInput from './components/Chat/CChatInput.vue'
 import CToast from './components/CToast.vue'
 import CSettings from './components/CSettings.vue'
-
-import { ref, watch, nextTick } from 'vue'
 import { useChatSession } from './store'
 import clipboardEvent from './clipboard'
 import useMessages from './hooks/useMessages'
