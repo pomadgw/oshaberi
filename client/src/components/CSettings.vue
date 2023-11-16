@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import CButton from './CButton.vue'
 
+import CButton from './CButton.vue'
 import { supportedModels, useChatGPTSetting } from '../store'
 
 const props = defineProps<{

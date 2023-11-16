@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { watch } from 'vue'
+
 import { injectToast } from '../hooks/useToast'
 
 const { isToastOpen, toastText, closeToast } = injectToast()

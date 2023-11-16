@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import CButton from '../CButton.vue'
 import { type ChatCompletionRequestMessageRoleEnum } from 'openai'
+
+import CButton from '../CButton.vue'
 import { useChatGPTSetting } from '../../store'
 
 const props = defineProps({

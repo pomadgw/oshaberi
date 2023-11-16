@@ -1,6 +1,5 @@
 import { computed, type ComputedRef, type Ref } from 'vue'
 import { get_encoding } from '@dqbd/tiktoken'
-
 import { type ChatCompletionRequestMessage } from 'openai'
 
 // Load the tokenizer which is designed to work with the embedding model

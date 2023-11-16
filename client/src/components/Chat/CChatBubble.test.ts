@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event'
 import matchers from '@testing-library/jest-dom/matchers'
 
 import emitter from '../../clipboard'
-
 import Component from './CChatBubble.vue'
 
 expect.extend(matchers)

@@ -1,7 +1,8 @@
 import { type ComputedRef, computed, ref } from 'vue'
+import { type ChatCompletionRequestMessage } from 'openai'
+
 import { useChatSession } from '../store'
 import { type Message, type ChatMessages } from '../lib/types/chat'
-import { type ChatCompletionRequestMessage } from 'openai'
 import useTokenCalculator, { tokenLength } from './useTokenCalculator'
 
 // eslint-disable-next-line
