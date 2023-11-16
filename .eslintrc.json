@@ -25,7 +25,31 @@
   "parser": "vue-eslint-parser",
   "plugins": ["vue", "prettier"],
   "rules": {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    // /end Unused Import
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          ["internal", "parent", "sibling", "index"],
+          "type",
+          "unknown"
+        ],
+        "pathGroupsExcludedImportTypes": [],
+        "newlines-between": "always"
+      }
+    ]
   },
   "ignorePatterns": ["dist", "dist-server", "node_modules", "./client/*.js"]
 }
