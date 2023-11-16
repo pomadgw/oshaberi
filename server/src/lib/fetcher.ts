@@ -1,4 +1,5 @@
 import axios, { type AxiosResponse, type AxiosRequestConfig } from 'axios'
+
 import { getClient } from './redis'
 
 export const USER_AGENT =

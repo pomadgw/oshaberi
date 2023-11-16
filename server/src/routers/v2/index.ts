@@ -2,19 +2,10 @@ import express from 'express'
 import { RetrievalQAChain, loadSummarizationChain } from 'langchain/chains'
 import { ChatOpenAI } from 'langchain/chat_models/openai'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
-
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import { RedisVectorStore } from 'langchain/vectorstores/redis'
-import { YoutubeLoader } from 'langchain/document_loaders/web/youtube'
-import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
-
 import multer from 'multer'
 
-import { getClient } from '../../lib/redis.js'
-import { Document } from 'langchain/document'
-import { getCheerioDocument } from '../../lib/cheerio.js'
-import { fetch } from '../../lib/fetcher.js'
-import { type SelectorType } from 'cheerio'
+import { isDocumentSource, getDocuments } from './isDocumentSource.js'
+import { getVectorStore } from '../../lib/getVectorStore.js'
 
 const router = express.Router()
 const upload = multer({ dest: 'uploads/' })
@@ -27,116 +18,6 @@ function getModel(): ChatOpenAI {
   }
 
   return model
-}
-
-enum DocumentSource {
-  Youtube = 'youtube',
-  Web = 'web',
-  Text = 'text',
-  PDF = 'pdf'
-}
-
-function isDocumentSource(value: any): value is DocumentSource {
-  return Object.values(DocumentSource).includes(value)
-}
-
-interface YoutubeDocumentSourceParams {
-  type: DocumentSource.Youtube
-  videoId: string
-  language?: string
-}
-
-interface WebDocumentSourceParams {
-  type: DocumentSource.Web
-  url: string
-  selector?: SelectorType
-}
-
-interface TextDocumentSourceParams {
-  type: DocumentSource.Text
-  file?: Express.Multer.File
-  url?: string | URL
-}
-
-interface PDFDocumentSourceParams {
-  type: DocumentSource.PDF
-  file: Express.Multer.File
-}
-
-type DocumentSourceParams =
-  | YoutubeDocumentSourceParams
-  | WebDocumentSourceParams
-  | TextDocumentSourceParams
-  | PDFDocumentSourceParams
-
-async function getDocuments(
-  params: DocumentSourceParams
-): Promise<Array<Document<Record<string, any>>> | null> {
-  let documents: Array<Document<Record<string, any>>> | null = null
-  if (params.type === DocumentSource.Youtube) {
-    const { videoId, language = 'en' } = params
-
-    if (videoId == null) {
-      throw new Error('videoId is required')
-    }
-
-    if (typeof videoId === 'string') {
-      const loader = YoutubeLoader.createFromUrl(
-        `https://youtu.be/${videoId}`,
-        {
-          language,
-          addVideoInfo: true
-        }
-      )
-
-      console.log('Loading video...')
-      documents = await loader.load()
-    }
-  } else if (params.type === DocumentSource.Web) {
-    const { url, selector = 'body' } = params
-
-    if (url == null) {
-      throw new Error('url is required')
-    }
-
-    if (typeof url === 'string') {
-      console.log('Loading web...')
-      documents = await getCheerioDocument({
-        url,
-        selector
-      })
-    }
-  } else if (params.type === DocumentSource.Text) {
-    const { file, url } = params
-
-    if (file == null && url == null) {
-      throw new Error('file or url is required')
-    }
-
-    if (typeof file === 'object') {
-      console.log('Loading text...')
-      documents = [new Document({ pageContent: file.buffer.toString() })]
-    } else if (typeof url === 'string') {
-      console.log('Loading text...')
-      const text = await fetch(url)
-      documents = [new Document({ pageContent: text })]
-    }
-  } else if (params.type === DocumentSource.PDF) {
-    const { file } = params
-
-    if (file == null) {
-      throw new Error('file is required')
-    }
-
-    if (typeof file === 'object') {
-      console.log('Loading pdf...')
-      const loader = new PDFLoader(new Blob([file.buffer]))
-
-      documents = await loader.load()
-    }
-  }
-
-  return documents
 }
 
 router.post('/query', upload.single('file'), async (req, res) => {
@@ -168,17 +49,7 @@ router.post('/query', upload.single('file'), async (req, res) => {
 
     const splitDocs = await textSplitter.splitDocuments(documents)
 
-    const embeddings = new OpenAIEmbeddings()
-
-    console.log('Loading embeddings...')
-    const vectorStore = await RedisVectorStore.fromDocuments(
-      splitDocs,
-      embeddings,
-      {
-        redisClient: await getClient(),
-        indexName: 'docs'
-      }
-    )
+    const vectorStore = await getVectorStore(splitDocs)
 
     getModel().modelName = modelName
 

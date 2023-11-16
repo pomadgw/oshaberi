@@ -1,8 +1,9 @@
 import { load, type SelectorType } from 'cheerio'
 import { Document } from 'langchain/document'
-import { fetch } from './fetcher'
 import { convert } from 'html-to-text'
 import { type AxiosRequestConfig } from 'axios'
+
+import { fetch } from './fetcher'
 
 interface CheerioDocumentLoaderOptions {
   url: string | URL
