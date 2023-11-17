@@ -3,8 +3,6 @@ import path from 'path'
 import dotenv from 'dotenv'
 import express from 'express'
 import cors from 'cors'
-// import { franc } from 'franc'
-import lingua from 'lingua-nodejs'
 
 import homeRouters from './routers/home.js'
 import assetsRouters from './routers/assets.js'
@@ -59,13 +57,6 @@ app.options(
 )
 
 app.use('/api/chat', chatRouters())
-
-app.post('/api/language', (req, res) => {
-  const { text } = req.body
-  const language = lingua.detectLanguage(text)
-
-  res.json({ language })
-})
 
 app.use(homeRouters)
 
