@@ -6,9 +6,9 @@ import cors from 'cors'
 // import { franc } from 'franc'
 import lingua from 'lingua-nodejs'
 
-import homeRouters from './home.js'
-import assetsRouters from './assets.js'
-import chatRouters from './chatgpt.js'
+import homeRouters from './routers/home.js'
+import assetsRouters from './routers/assets.js'
+import chatRouters from './routers/chatgpt.js'
 
 if (process.env.NODE_ENV === 'production') {
   dotenv.config({

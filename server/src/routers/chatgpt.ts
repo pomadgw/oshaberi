@@ -9,7 +9,7 @@ import {
 } from 'openai'
 import { get_encoding } from '@dqbd/tiktoken'
 
-import functions, { functionLibraries } from './lib/functions.js'
+import functions, { functionLibraries } from '../lib/functions.js'
 
 const tokenizer = get_encoding('cl100k_base')
 
