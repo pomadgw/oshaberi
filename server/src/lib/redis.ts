@@ -1,14 +1,10 @@
-import { createClient } from 'redis'
+import { Redis } from 'ioredis'
 
-let client: ReturnType<typeof createClient> | undefined
+let client: Redis | undefined
 
-export async function getClient(): Promise<ReturnType<typeof createClient>> {
+export async function getClient(): Promise<Redis> {
   if (client == null) {
-    client = createClient({
-      url: process.env.REDIS_URL ?? 'redis://localhost:6379'
-    })
-
-    await client.connect()
+    client = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379')
   }
 
   return client
