@@ -108,7 +108,6 @@ const closeSystemMessage = (): void => {
         <form
           method="dialog"
           class="flex flex-col gap-3 p-4 border rounded-md modal-box"
-          style="background-color: hsl(var(--b1) / var(--tw-bg-opacity, 1))"
         >
           <div class="ml-4 text-sm font-bold">Chat history</div>
           <div
@@ -137,7 +136,7 @@ const closeSystemMessage = (): void => {
                 "
                 @click="messageStore.removeSession(key)"
               >
-                x
+                &times;
               </button>
               <div v-else class="invisible">x</div>
             </div>
@@ -161,7 +160,6 @@ const closeSystemMessage = (): void => {
         <form
           method="dialog"
           class="flex flex-col gap-3 p-4 border rounded-md modal-box"
-          style="background-color: hsl(var(--b1) / var(--tw-bg-opacity, 1))"
         >
           <div class="form-control w-full">
             <div class="label">
