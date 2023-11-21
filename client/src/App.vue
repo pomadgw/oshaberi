@@ -10,10 +10,13 @@ import clipboardEvent from './clipboard'
 import useMessages from './hooks/useMessages'
 import useChat from './hooks/useChat'
 import useToast from './hooks/useToast'
+import useSaveStates from './hooks/useSaveStates'
 
 const { openToast } = useToast()
 
 const messageStore = useChatSession()
+
+const { isFetched } = useSaveStates()
 
 const { messages, clearChat, currentMessage, currentMessageTokenLength } =
   useMessages()
@@ -76,7 +79,7 @@ const closeSystemMessage = (): void => {
 <template>
   <CSettings v-model:open="dialogOpen" />
   <CToast class="z-50" />
-  <div class="flex flex-col max-w-[1200px] m-auto h-screen">
+  <div v-if="isFetched" class="flex flex-col max-w-[1200px] m-auto h-screen">
     <div class="navbar bg-base-100">
       <div>
         <a class="btn btn-ghost normal-case text-xl">oShaberi</a>
