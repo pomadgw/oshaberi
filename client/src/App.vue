@@ -173,6 +173,7 @@ watch(
             @click="
               () => {
                 messageStore.addNewSession(newSession)
+                messageStore.selectSession(newSession)
                 newSession = ''
               }
             "
