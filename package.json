@@ -9,10 +9,11 @@
     "dev": "concurrently 'npm:dev:frontend' 'npm:dev:backend'",
     "build:backend": "cd server && yarn build",
     "build:frontend": "cd client && yarn build",
-    "build": "concurrently 'npm:build:frontend' 'npm:build:backend'",
+    "build": "yarn clean && concurrently 'npm:build:frontend' 'npm:build:backend'",
     "start": "NODE_ENV=production node dist-server/index.js",
     "lint": "eslint --ext .ts,.vue",
-    "test:frontend": "cd client && yarn test"
+    "test:frontend": "cd client && yarn test",
+    "clean": "rm -rf dist-server dist"
   },
   "workspaces": [
     "client",
