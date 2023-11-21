@@ -1,12 +1,13 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import axios, { type AxiosError } from 'axios'
 
-import { useChatGPTSetting, useChatSession } from '../store'
+import { useBasicAuth, useChatGPTSetting, useChatSession } from '../store'
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export default function useSaveStates() {
   const settingsStore = useChatGPTSetting()
   const messageStore = useChatSession()
+  const basicAuth = useBasicAuth()
 
   let unsubscribeSettings: () => void
   let unsubscribeSession: () => void
@@ -14,46 +15,68 @@ export default function useSaveStates() {
   const id = new URLSearchParams(window.location.search).get('id') ?? '1'
 
   const isFetched = ref(false)
+  const isErrorAuth = ref(false)
 
   onMounted(async () => {
-    await axios
-      .get(`/api/states/settings/${id}`)
-      .then((res) => {
-        const { data } = res
+    await Promise.all([
+      axios
+        .get(`/api/states/settings/${id}`, {
+          auth: {
+            username: basicAuth.username,
+            password: basicAuth.password
+          }
+        })
+        .then((res) => {
+          const { data } = res
 
-        settingsStore.$state = data
-      })
-      .catch((err) => {
-        console.error(err)
-      })
+          settingsStore.$state = data
+        })
+        .catch((err) => {
+          const error = err as AxiosError<any>
+          console.error(err)
 
-    await axios
-      .get(`/api/states/sessions/${id}`)
-      .then((res) => {
-        const { data } = res
+          if (error.response?.status === 401) {
+            isErrorAuth.value = true
+          }
+        }),
 
-        messageStore.$state = data
-      })
-      .catch((err) => {
-        console.error(err)
-        const error = err as AxiosError<any>
-        if (error.response?.status === 404) {
-          axios
-            .post(`/api/states/sessions/${id}`, {
-              state: messageStore.$state
-            })
-            .catch((err) => {
-              console.error(err)
-            })
-        }
-      })
+      axios
+        .get(`/api/states/sessions/${id}`, {
+          auth: {
+            username: basicAuth.username,
+            password: basicAuth.password
+          }
+        })
+        .then((res) => {
+          const { data } = res
+
+          messageStore.$state = data
+        })
+        .catch((err) => {
+          const error = err as AxiosError<any>
+          console.error(err)
+
+          if (error.response?.status === 401) {
+            isErrorAuth.value = true
+          }
+        })
+    ])
 
     unsubscribeSession = messageStore.$onAction(({ after }) => {
       after(() => {
         axios
-          .post(`/api/states/sessions/${id}`, {
-            state: messageStore.$state
-          })
+          .post(
+            `/api/states/sessions/${id}`,
+            {
+              state: messageStore.$state
+            },
+            {
+              auth: {
+                username: basicAuth.username,
+                password: basicAuth.password
+              }
+            }
+          )
           .catch((err) => {
             console.error(err)
           })
@@ -68,5 +91,5 @@ export default function useSaveStates() {
     unsubscribeSession()
   })
 
-  return { isFetched }
+  return { isFetched, isErrorAuth }
 }

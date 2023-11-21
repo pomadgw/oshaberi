@@ -141,3 +141,24 @@ export const useChatSession = defineStore('chatSessions', {
   },
   persist: true
 })
+
+export const useBasicAuth = defineStore('basicAuth', {
+  state: () => ({
+    username: '',
+    password: ''
+  }),
+  getters: {
+    auth(): string {
+      return btoa(`${this.username}:${this.password}`)
+    }
+  },
+  actions: {
+    setUsername(username: string) {
+      this.username = username
+    },
+    setPassword(password: string) {
+      this.password = password
+    }
+  },
+  persist: true
+})

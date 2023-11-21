@@ -9,15 +9,24 @@ import {
 } from 'openai'
 import axios, { type AxiosResponse, type AxiosError } from 'axios'
 
+import { useBasicAuth } from '../store'
+
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export default function useLLM() {
   const url = '/api/chat'
   const callFuncUrl = '/api/chat/function'
 
+  const basicAuth = useBasicAuth()
+
   async function doChat(
     data: CreateChatCompletionRequest
   ): Promise<AxiosResponse<CreateChatCompletionResponse>> {
-    return await axios.post(url, data)
+    return await axios.post(url, data, {
+      auth: {
+        username: basicAuth.username,
+        password: basicAuth.password
+      }
+    })
   }
 
   async function callFunc(data: CreateChatCompletionRequest): Promise<
@@ -26,7 +35,12 @@ export default function useLLM() {
       functionMessage: ChatCompletionRequestMessage
     }>
   > {
-    return await axios.post(callFuncUrl, data)
+    return await axios.post(callFuncUrl, data, {
+      auth: {
+        username: basicAuth.username,
+        password: basicAuth.password
+      }
+    })
   }
 
   const chat = useMutation<

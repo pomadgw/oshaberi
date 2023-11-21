@@ -1,6 +1,7 @@
 import path from 'path'
 
 import express from 'express'
+import basicAuth from 'express-basic-auth'
 
 import homeRouters from './home.js'
 import assetsRouters from './assets.js'
@@ -18,8 +19,26 @@ export function attachRouters(app: express.Express): void {
     app.use('/src', assetsRouters)
   }
 
-  app.use('/api/chat', chatRouters())
-  app.use('/api/states', stateRouters)
+  const apiRouter = express.Router()
+
+  // add basic auth
+  if (
+    process.env.BASIC_AUTH_USERNAME != null &&
+    process.env.BASIC_AUTH_PASSWORD != null
+  ) {
+    apiRouter.use(
+      basicAuth({
+        users: {
+          [process.env.BASIC_AUTH_USERNAME]: process.env.BASIC_AUTH_PASSWORD
+        }
+      })
+    )
+  }
+
+  apiRouter.use('/chat', chatRouters())
+  apiRouter.use('/states', stateRouters)
+
+  app.use('/api', apiRouter)
 
   app.use(homeRouters)
 }

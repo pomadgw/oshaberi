@@ -5,7 +5,7 @@ import CChat from './components/Chat/CChat.vue'
 import CChatInput from './components/Chat/CChatInput.vue'
 import CToast from './components/CToast.vue'
 import CSettings from './components/CSettings.vue'
-import { useChatSession } from './store'
+import { useChatSession, useBasicAuth } from './store'
 import clipboardEvent from './clipboard'
 import useMessages from './hooks/useMessages'
 import useChat from './hooks/useChat'
@@ -15,8 +15,9 @@ import useSaveStates from './hooks/useSaveStates'
 const { openToast } = useToast()
 
 const messageStore = useChatSession()
+const basicAuthStore = useBasicAuth()
 
-const { isFetched } = useSaveStates()
+const { isFetched, isErrorAuth } = useSaveStates()
 
 const { messages, clearChat, currentMessage, currentMessageTokenLength } =
   useMessages()
@@ -74,6 +75,31 @@ const openSystemMessage = (): void => {
 const closeSystemMessage = (): void => {
   systemMessageDialog.value?.close()
 }
+
+const basicAuthDialog = ref<HTMLDialogElement>()
+
+const openBasicAuthDialog = (): void => {
+  basicAuthDialog.value?.showModal()
+}
+
+const closeBasicAuthDialog = (): void => {
+  // reload page
+  window.location.reload()
+}
+
+watch(
+  [isErrorAuth, basicAuthDialog],
+  async () => {
+    if (isErrorAuth.value && basicAuthDialog.value !== null) {
+      await nextTick(() => {
+        openBasicAuthDialog()
+      })
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <template>
@@ -183,6 +209,38 @@ const closeSystemMessage = (): void => {
 
           <button class="btn btn-primary" @click="closeSystemMessage">
             Close
+          </button>
+        </form>
+      </dialog>
+
+      <dialog ref="basicAuthDialog" class="z-50 modal modal-middle">
+        <form
+          method="dialog"
+          class="flex flex-col gap-3 p-4 border rounded-md modal-box"
+        >
+          <div class="form-control w-full">
+            <div class="label">
+              <p class="label-text">Username</p>
+            </div>
+            <input
+              v-model="basicAuthStore.username"
+              type="text"
+              class="input input-bordered"
+            />
+          </div>
+          <div class="form-control w-full">
+            <div class="label">
+              <p class="label-text">Password</p>
+            </div>
+            <input
+              v-model="basicAuthStore.password"
+              type="password"
+              class="input input-bordered"
+            />
+          </div>
+
+          <button class="btn btn-primary" @click="closeBasicAuthDialog">
+            Save and Reload
           </button>
         </form>
       </dialog>
