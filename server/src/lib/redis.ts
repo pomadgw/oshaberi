@@ -4,7 +4,9 @@ let client: Redis | undefined
 
 export async function getClient(): Promise<Redis> {
   if (client == null) {
-    client = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379')
+    client = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379', {
+      connectTimeout: 30000
+    })
   }
 
   return client
