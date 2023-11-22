@@ -274,7 +274,9 @@ watch(
           />
         </div>
 
-        <button class="btn" @click="resend">Resend Last Messages</button>
+        <button :disabled="isSendingChat" class="btn" @click="resend">
+          Resend Last Messages
+        </button>
 
         <CChatInput
           :insertMessageMode="insertMessageMode"
