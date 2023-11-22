@@ -62,6 +62,27 @@ export default function useSaveStates() {
         })
     ])
 
+    unsubscribeSettings = settingsStore.$onAction(({ after }) => {
+      after(() => {
+        axios
+          .post(
+            `/api/states/settings/${id}`,
+            {
+              state: settingsStore.$state
+            },
+            {
+              auth: {
+                username: basicAuth.username,
+                password: basicAuth.password
+              }
+            }
+          )
+          .catch((err) => {
+            console.error(err)
+          })
+      })
+    })
+
     unsubscribeSession = messageStore.$onAction(({ after }) => {
       after(() => {
         axios
