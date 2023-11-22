@@ -147,25 +147,6 @@ watch(
           </ul>
         </details>
       </li>
-      <!-- <li>
-        <details>
-          <summary>Parent item</summary>
-          <ul class="menu">
-            <li><a>Submenu 1</a></li>
-            <li><a>Submenu 2</a></li>
-            <li>
-              <details open>
-                <summary>Parent</summary>
-                <ul>
-                  <li><a>item 1</a></li>
-                  <li><a>item 2</a></li>
-                </ul>
-              </details>
-            </li>
-          </ul>
-        </details>
-      </li>
-      <li><a>Item 3</a></li> -->
     </ul>
     <div class="flex flex-1 w-full gap-5 p-4 md:p-8">
       <dialog ref="historyDialog" class="z-50 modal modal-middle">
