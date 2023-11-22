@@ -106,18 +106,17 @@ watch(
   <CSettings v-model:open="dialogOpen" />
   <CToast class="z-50" />
   <div v-if="isFetched" class="flex flex-col max-w-[1200px] m-auto h-screen">
-    <div class="navbar bg-base-100">
+    <nav class="navbar bg-base-100 hidden md:flex">
       <div>
         <a class="btn btn-ghost normal-case text-xl">oShaberi</a>
       </div>
       <div class="text-md flex gap-2 flex-1">
-        <span>Session:</span>
-        <span class="font-bold">{{ messageStore.selectedSession }}</span>
+        <button class="btn btn-ghost normal-case" @click="openHistory">
+          <span>Session:</span>
+          <span class="font-bold">{{ messageStore.selectedSession }}</span>
+        </button>
       </div>
       <div class="navbar-end">
-        <button class="btn btn-ghost normal-case" @click="openHistory">
-          History
-        </button>
         <button class="btn btn-ghost normal-case" @click="openSettings">
           Settings
         </button>
@@ -128,7 +127,46 @@ watch(
           Clear chat
         </button>
       </div>
-    </div>
+    </nav>
+    <ul class="menu menu-horizontal bg-base-200 z-10 md:hidden">
+      <li><span class="font-bold">oShaberi</span></li>
+      <li>
+        <a @click="openHistory"
+          >Session:
+          <span class="font-bold">{{ messageStore.selectedSession }}</span>
+        </a>
+      </li>
+
+      <li>
+        <details>
+          <summary>Menu</summary>
+          <ul>
+            <li><a @click="openSettings">Settings</a></li>
+            <li><a @click="openSystemMessage">System message</a></li>
+            <li><a @click="clearChat">Clear chat</a></li>
+          </ul>
+        </details>
+      </li>
+      <!-- <li>
+        <details>
+          <summary>Parent item</summary>
+          <ul class="menu">
+            <li><a>Submenu 1</a></li>
+            <li><a>Submenu 2</a></li>
+            <li>
+              <details open>
+                <summary>Parent</summary>
+                <ul>
+                  <li><a>item 1</a></li>
+                  <li><a>item 2</a></li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </details>
+      </li>
+      <li><a>Item 3</a></li> -->
+    </ul>
     <div class="flex flex-1 w-full gap-5 p-4 md:p-8">
       <dialog ref="historyDialog" class="z-50 modal modal-middle">
         <form

@@ -18,7 +18,7 @@ const emit =
 </script>
 
 <template>
-  <div class="masked-overflow overflow-y-auto flex flex-col gap-3 p-6">
+  <div class="masked-overflow overflow-y-auto flex flex-col gap-3 py-3 md:px-6">
     <CChatBubble
       v-for="(message, index) in props.messages"
       :key="index"
