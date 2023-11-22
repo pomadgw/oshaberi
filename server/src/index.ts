@@ -7,14 +7,16 @@ import morgan from 'morgan'
 
 import { attachRouters } from './routers/index.js'
 
-if (process.env.NODE_ENV === 'production') {
-  dotenv.config({
-    path: path.join(path.resolve(), '.env')
-  })
-} else {
-  dotenv.config({
-    path: path.join(path.resolve(), '../.env')
-  })
+if (global.Bun == null) {
+  if (process.env.NODE_ENV === 'production') {
+    dotenv.config({
+      path: path.join(path.resolve(), '.env')
+    })
+  } else {
+    dotenv.config({
+      path: path.join(path.resolve(), '../.env')
+    })
+  }
 }
 
 const port = Number(process.env.PORT ?? 3000)

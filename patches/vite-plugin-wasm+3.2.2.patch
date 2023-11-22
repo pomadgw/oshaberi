@@ -1,0 +1,9 @@
+diff --git a/node_modules/vite-plugin-wasm/exports/import.mjs b/node_modules/vite-plugin-wasm/exports/import.mjs
+index 82e441b..d6555dd 100644
+--- a/node_modules/vite-plugin-wasm/exports/import.mjs
++++ b/node_modules/vite-plugin-wasm/exports/import.mjs
+@@ -1,2 +1,2 @@
+-import { default as m } from "../dist/index.js";
+-export default m.default;
++import m from "../dist/index.js";
++export default m;

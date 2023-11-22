@@ -3,12 +3,13 @@
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import wasm from 'vite-plugin-wasm'
-import topLevelAwait from 'vite-plugin-top-level-await'
+// import topLevelAwait from 'vite-plugin-top-level-await'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), wasm(), topLevelAwait()],
+  plugins: [vue(), wasm()],
   build: {
+    target: 'esnext',
     manifest: true,
     outDir: '../dist',
     rollupOptions: {

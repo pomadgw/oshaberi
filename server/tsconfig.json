@@ -15,7 +15,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "outDir": "../dist-server"
+    "outDir": "../dist-server",
+
+    "types": ["bun-types"]
   },
   "include": ["./src/**/*.ts", "./**/*.d.ts"]
 }

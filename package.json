@@ -2,18 +2,19 @@
   "name": "oshaberi",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev:frontend": "cd client && yarn dev",
     "dev:backend": "cd server && yarn dev",
     "dev": "concurrently 'npm:dev:frontend' 'npm:dev:backend'",
-    "build:backend": "cd server && yarn build",
-    "build:frontend": "cd client && yarn build",
-    "build": "yarn clean && concurrently 'npm:build:frontend' 'npm:build:backend'",
+    "build:backend": "cd server && bun run build",
+    "build:frontend": "cd client && bun run build",
+    "build": "bun run clean && concurrently 'npm:build:frontend' 'npm:build:backend'",
     "start": "NODE_ENV=production node dist-server/index.js",
+    "start:bun": "NODE_ENV=production bun run server/src/index.ts",
     "lint": "eslint --ext .ts,.vue",
     "test:frontend": "cd client && yarn test",
-    "clean": "rm -rf dist-server dist"
+    "clean": "rm -rf dist-server dist",
+    "postinstall": "bunx patch-package"
   },
   "workspaces": [
     "client",
@@ -34,6 +35,7 @@
     "eslint-plugin-unused-imports": "^3.0.0",
     "eslint-plugin-vue": "latest",
     "nodemon": "^3.0.1",
+    "patch-package": "^8.0.0",
     "prettier": "^3.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"

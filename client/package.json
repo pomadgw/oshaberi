@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "vue-tsc && vite build && rm -f *.tsbuildinfo",
+    "dev:bun": "bunx --bun vite --host",
+    "build": "vue-tsc && bunx --bun vite build && rm -f *.tsbuildinfo",
     "preview": "vite preview",
-    "test": "vitest --dom"
+    "test": "bunx --run vitest --dom"
   },
   "dependencies": {
     "@tanstack/vue-query": "^4.32.6",
