@@ -10,6 +10,7 @@ import {
 import { get_encoding } from '@dqbd/tiktoken'
 
 import functions, { functionLibraries } from '../lib/functions.js'
+import { logger } from '../lib/logger.js'
 
 const tokenizer = get_encoding('cl100k_base')
 
@@ -64,12 +65,12 @@ export default function chatGptRouter(): express.Router {
         // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         ...(useFunction ? { functions } : {})
       }
-      console.log({ params, body: req.body })
+      logger.info({ params, body: req.body })
       const chatCompletion = await openai.createChatCompletion(params)
 
       res.json(chatCompletion.data)
     } catch (err) {
-      console.error(err)
+      logger.error(err)
       const axiosError = err as AxiosError<any>
 
       res.status(axiosError.status ?? 500).json(axiosError.response?.data)
@@ -126,7 +127,7 @@ export default function chatGptRouter(): express.Router {
       try {
         parsedArguments = JSON.parse(argumentsFromOpenAI ?? '{}')
       } catch (e) {
-        console.error(e)
+        logger.error(e)
       }
 
       const result = await functionLibrary?.callback(

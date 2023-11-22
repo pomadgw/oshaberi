@@ -3,6 +3,7 @@ import path from 'path'
 import dotenv from 'dotenv'
 import express from 'express'
 import cors from 'cors'
+import morgan from 'morgan'
 
 import { attachRouters } from './routers/index.js'
 
@@ -44,6 +45,8 @@ app.options(
     }
   })
 )
+
+app.use(morgan('combined'))
 
 attachRouters(app)
 
