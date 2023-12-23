@@ -1,6 +1,9 @@
 {
   "name": "oshaberi",
   "packageManager": "yarn@3.6.1",
+  "scripts": {
+    "dev:server": "bun run ./server/src/main.ts"
+  },
   "workspaces": [
     "server",
     "client"

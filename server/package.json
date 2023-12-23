@@ -2,6 +2,9 @@
   "name": "oshaberi-server",
   "module": "src/main.ts",
   "type": "module",
+  "scripts": {
+    "dev": "bun run ./src/main.ts"
+  },
   "devDependencies": {
     "bun-types": "latest"
   },
