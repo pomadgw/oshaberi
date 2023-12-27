@@ -4,9 +4,13 @@ import { type BaseChatModel } from 'langchain/chat_models/base'
 import { ChatOllama } from 'langchain/chat_models/ollama'
 import { AIMessage, type BaseMessage, HumanMessage, SystemMessage } from 'langchain/schema'
 import { ZodError } from 'zod'
-
-import { OshaberiChatParameterSchema, OshaberiValidLLMProvider, OshaberiValidLLMProviderSchema } from './types'
 import OpenAI from 'openai'
+
+import {
+  OshaberiChatParameterSchema,
+  type OshaberiValidLLMProvider,
+  OshaberiValidLLMProviderSchema
+} from './types'
 import { OllamaTagSchema } from './types/ollama'
 
 const api = new Hono()
@@ -82,85 +86,71 @@ const providers: Record<OshaberiValidLLMProvider, LLMProvider> = {
   ollama: new OllamaProvider()
 }
 
-api.get('/models', async (c) => {
-  try {
-    const providerId = OshaberiValidLLMProviderSchema.parse(c.req.query('provider'))
-    const provider = providers[providerId]
+api.onError((e, c) => {
+  console.error(e)
+  c.status(400)
 
-    c.status(200)
-
-    const models = await provider.getModelLists()
-    return c.json({ models })
-  } catch (e) {
-    console.error(e)
-    c.status(400)
-
-    if (e instanceof ZodError) {
-      return c.json({
-        errors: e.errors
-      })
-    }
-
+  if (e instanceof ZodError) {
     return c.json({
-      errors: [(e as any).toString()]
+      errors: e.errors
     })
   }
+
+  return c.json({
+    errors: [(e as any).toString()]
+  })
+})
+
+api.get('/models', async (c) => {
+  const providerId = OshaberiValidLLMProviderSchema.parse(c.req.query('provider'))
+  const provider = providers[providerId]
+
+  c.status(200)
+
+  const models = await provider.getModelLists()
+  return c.json({ models })
 })
 
 api.post('/chat', async (c) => {
-  try {
-    const body = OshaberiChatParameterSchema.parse(await c.req.json())
-    const llmProvider = providers[body.provider]
+  const body = OshaberiChatParameterSchema.parse(await c.req.json())
+  const llmProvider = providers[body.provider]
 
-    llmProvider.setModel(body.model)
-    llmProvider.setTemperature(body.temperature)
+  llmProvider.setModel(body.model)
+  llmProvider.setTemperature(body.temperature)
 
-    let messages: BaseMessage[] = []
+  let messages: BaseMessage[] = []
 
-    for (const m of body.messages) {
-      if (m.role === 'user') {
-        messages.push(
-          new HumanMessage({
-            content: m.content
-          })
-        )
-      } else if (m.role === 'assistant') {
-        messages.push(
-          new AIMessage({
-            content: m.content
-          })
-        )
-      } else {
-        messages = [
-          new SystemMessage({
-            content: m.content
-          }),
-          ...messages
-        ]
-      }
+  for (const m of body.messages) {
+    if (m.role === 'user') {
+      messages.push(
+        new HumanMessage({
+          content: m.content
+        })
+      )
+    } else if (m.role === 'assistant') {
+      messages.push(
+        new AIMessage({
+          content: m.content
+        })
+      )
+    } else {
+      messages = [
+        new SystemMessage({
+          content: m.content
+        }),
+        ...messages
+      ]
     }
-
-    const result = await llmProvider.getModel().predictMessages(messages)
-
-    c.status(200)
-
-    return c.json({
-      content: result.content,
-      role: 'assistant'
-    })
-  } catch (e) {
-    c.status(400)
-
-    if (e instanceof ZodError) {
-      return c.json({
-        errors: e.errors
-      })
-    }
-
-    return c.json({
-      errors: [(e as any).toString()]
-    })
   }
+
+  const result = await llmProvider.getModel().predictMessages(messages)
+
+  c.status(200)
+
+  return c.json({
+    content: result.content,
+    role: 'assistant'
+  })
 })
 
 export default (app: Hono) => app.route('/api', api)
