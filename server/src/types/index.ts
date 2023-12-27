@@ -6,40 +6,40 @@ const BaseMessage = z.object({
   content: z.string()
 })
 
-export const UserMessage = BaseMessage.extend({
+export const UserMessageSchema = BaseMessage.extend({
   role: z.literal('user')
 })
-export type UserMessage = z.infer<typeof UserMessage>
+export type UserMessage = z.infer<typeof UserMessageSchema>
 
-export const AssistantMessage = BaseMessage.extend({
+export const AssistantMessageSchema = BaseMessage.extend({
   role: z.literal('assistant')
 })
-export type AssistantMessage = z.infer<typeof AssistantMessage>
+export type AssistantMessage = z.infer<typeof AssistantMessageSchema>
 
-export const SystemMessage = BaseMessage.extend({
+export const SystemMessageSchema = BaseMessage.extend({
   role: z.literal('system')
 })
-export type SystemMessage = z.infer<typeof SystemMessage>
+export type SystemMessage = z.infer<typeof SystemMessageSchema>
 
-export const Message = z.discriminatedUnion('role', [UserMessage, AssistantMessage, SystemMessage])
-export type Message = z.infer<typeof Message>
+export const MessageSchema = z.discriminatedUnion('role', [UserMessageSchema, AssistantMessageSchema, SystemMessageSchema])
+export type Message = z.infer<typeof MessageSchema>
 
-export const OshaberiValidLLMProvider = z.enum(['openai', 'ollama'])
-export type OshaberiValidLLMProvider = z.infer<typeof OshaberiValidLLMProvider>
+export const OshaberiValidLLMProviderSchema = z.enum(['openai', 'ollama'])
+export type OshaberiValidLLMProvider = z.infer<typeof OshaberiValidLLMProviderSchema>
 
 export const OshaberiListModelParameterSchema = z.object({
-  provider: OshaberiValidLLMProvider
+  provider: OshaberiValidLLMProviderSchema
 })
 export type OshaberiListModelParameter = z.infer<typeof OshaberiListModelParameterSchema>
 
-export const OshaberiLLMParameter = z.object({
+export const OshaberiLLMParameterSchema = z.object({
   temperature: z.number(),
-  provider: OshaberiValidLLMProvider,
+  provider: OshaberiValidLLMProviderSchema,
   model: z.string()
 })
-export type OshaberiLLMParameter = z.infer<typeof OshaberiLLMParameter>
+export type OshaberiLLMParameter = z.infer<typeof OshaberiLLMParameterSchema>
 
-export const OshaberiChatParameter = OshaberiLLMParameter.extend({
-  messages: z.array(Message)
+export const OshaberiChatParameterSchema = OshaberiLLMParameterSchema.extend({
+  messages: z.array(MessageSchema)
 })
-export type OshaberiChatParameter = z.infer<typeof OshaberiChatParameter>
+export type OshaberiChatParameter = z.infer<typeof OshaberiChatParameterSchema>

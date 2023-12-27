@@ -5,7 +5,7 @@ import { ChatOllama } from 'langchain/chat_models/ollama'
 import { AIMessage, type BaseMessage, HumanMessage, SystemMessage } from 'langchain/schema'
 import { ZodError } from 'zod'
 
-import { OshaberiChatParameter, OshaberiValidLLMProvider } from './types'
+import { OshaberiChatParameterSchema, OshaberiValidLLMProvider, OshaberiValidLLMProviderSchema } from './types'
 import OpenAI from 'openai'
 import { OllamaTagSchema } from './types/ollama'
 
@@ -84,7 +84,7 @@ const providers: Record<OshaberiValidLLMProvider, LLMProvider> = {
 
 api.get('/models', async (c) => {
   try {
-    const providerId = OshaberiValidLLMProvider.parse(c.req.query('provider'))
+    const providerId = OshaberiValidLLMProviderSchema.parse(c.req.query('provider'))
     const provider = providers[providerId]
 
     c.status(200)
@@ -109,7 +109,7 @@ api.get('/models', async (c) => {
 
 api.post('/chat', async (c) => {
   try {
-    const body = OshaberiChatParameter.parse(await c.req.json())
+    const body = OshaberiChatParameterSchema.parse(await c.req.json())
     const llmProvider = providers[body.provider]
 
     llmProvider.setModel(body.model)
