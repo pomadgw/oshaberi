@@ -6,12 +6,15 @@
     "dev": "bun run ./src/main.ts"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "eslint-plugin-import": "^2.29.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "hono": "^3.11.7"
+    "hono": "^3.11.7",
+    "langchain": "^0.0.212",
+    "zod": "^3.22.4"
   }
 }
