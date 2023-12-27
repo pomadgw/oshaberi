@@ -5,16 +5,17 @@ import { ChatOllama } from 'langchain/chat_models/ollama'
 import { AIMessage, type BaseMessage, HumanMessage, SystemMessage } from 'langchain/schema'
 import { ZodError } from 'zod'
 
-import { OshaberiChatParameter, type OshaberiValidLLMProvider } from './types'
+import { OshaberiChatParameter, OshaberiValidLLMProvider } from './types'
+import OpenAI from 'openai'
+import { OllamaTagSchema } from './types/ollama'
 
 const api = new Hono()
-
-// const openaiProvider = new OpenAI()
 
 interface LLMProvider {
   setTemperature: (temperature: number) => void
   setModel: (model: string) => void
 
+  getModelLists: () => Promise<string[]>
   getModel: () => BaseChatModel
 }
 
@@ -27,6 +28,16 @@ class OpenAIProvider implements LLMProvider {
 
   setModel(model: string): void {
     this.openai.modelName = model
+  }
+
+  async getModelLists(): Promise<string[]> {
+    const openAiInstance = new OpenAI({
+      apiKey: this.openai.openAIApiKey
+    })
+
+    const list = await openAiInstance.models.list()
+
+    return list.data.map((e) => e.id)
   }
 
   getModel(): BaseChatModel {
@@ -52,6 +63,15 @@ class OllamaProvider implements LLMProvider {
     this.ollama.model = model
   }
 
+  async getModelLists(): Promise<string[]> {
+    const path = new URL('/api/tags', this.ollama.baseUrl)
+
+    const data = await (await fetch(path.toString())).json()
+    const list = OllamaTagSchema.parse(await (await fetch(path.toString())).json())
+
+    return list.models.map((e) => e.name)
+  }
+
   getModel(): BaseChatModel {
     return this.ollama
   }
@@ -61,6 +81,31 @@ const providers: Record<OshaberiValidLLMProvider, LLMProvider> = {
   openai: new OpenAIProvider(),
   ollama: new OllamaProvider()
 }
+
+api.get('/models', async (c) => {
+  try {
+    const providerId = OshaberiValidLLMProvider.parse(c.req.query('provider'))
+    const provider = providers[providerId]
+
+    c.status(200)
+
+    const models = await provider.getModelLists()
+    return c.json({ models })
+  } catch (e) {
+    console.error(e)
+    c.status(400)
+
+    if (e instanceof ZodError) {
+      return c.json({
+        errors: e.errors
+      })
+    }
+
+    return c.json({
+      errors: [(e as any).toString()]
+    })
+  }
+})
 
 api.post('/chat', async (c) => {
   try {

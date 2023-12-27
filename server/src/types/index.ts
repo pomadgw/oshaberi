@@ -27,6 +27,11 @@ export type Message = z.infer<typeof Message>
 export const OshaberiValidLLMProvider = z.enum(['openai', 'ollama'])
 export type OshaberiValidLLMProvider = z.infer<typeof OshaberiValidLLMProvider>
 
+export const OshaberiListModelParameterSchema = z.object({
+  provider: OshaberiValidLLMProvider
+})
+export type OshaberiListModelParameter = z.infer<typeof OshaberiListModelParameterSchema>
+
 export const OshaberiLLMParameter = z.object({
   temperature: z.number(),
   provider: OshaberiValidLLMProvider,

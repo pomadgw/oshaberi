@@ -9,7 +9,6 @@ module.exports = {
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "exclude": ["*.cjs"],
   "plugins": ["prettier", "unused-imports", "import"],
   "rules": {
     "prettier/prettier": "error",
