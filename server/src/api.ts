@@ -12,6 +12,7 @@ import {
   OshaberiValidLLMProviderSchema
 } from './types'
 import { OllamaTagSchema } from './types/ollama'
+import logger from './logger'
 
 const api = new Hono()
 
@@ -87,7 +88,8 @@ const providers: Record<OshaberiValidLLMProvider, LLMProvider> = {
 }
 
 api.onError((e, c) => {
-  console.error(e)
+  logger.error(e.message, { service: 'oshaberi-service-api' })
+
   c.status(400)
 
   if (e instanceof ZodError) {
@@ -143,6 +145,7 @@ api.post('/chat', async (c) => {
     }
   }
 
+  logger.info({ body })
   const result = await llmProvider.getModel().predictMessages(messages)
 
   c.status(200)
