@@ -11,7 +11,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest'
   },
-  plugins: ['prettier', 'unused-imports', 'plugin:import/recommended', 'plugin:import/typescript'],
+  plugins: ['prettier', 'unused-imports', 'import'],
   rules: {
     'prettier/prettier': 'error',
     '@typescript-eslint/return-await': 'off',
