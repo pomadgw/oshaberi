@@ -71,7 +71,7 @@ class OllamaProvider implements LLMProvider {
     const path = new URL('/api/tags', this.ollama.baseUrl)
 
     const data = await (await fetch(path.toString())).json()
-    const list = OllamaTagSchema.parse(await (await fetch(path.toString())).json())
+    const list = OllamaTagSchema.parse(data)
 
     return list.models.map((e) => e.name)
   }
