@@ -21,7 +21,11 @@ export const SystemMessageSchema = BaseMessage.extend({
 })
 export type SystemMessage = z.infer<typeof SystemMessageSchema>
 
-export const MessageSchema = z.discriminatedUnion('role', [UserMessageSchema, AssistantMessageSchema, SystemMessageSchema])
+export const MessageSchema = z.discriminatedUnion('role', [
+  UserMessageSchema,
+  AssistantMessageSchema,
+  SystemMessageSchema
+])
 export type Message = z.infer<typeof MessageSchema>
 
 export const OshaberiValidLLMProviderSchema = z.enum(['openai', 'ollama'])
