@@ -9,10 +9,12 @@ module.exports = {
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
+  "exclude": ["*.cjs"],
   "plugins": ["prettier", "unused-imports", "import"],
   "rules": {
     "prettier/prettier": "error",
     "@typescript-eslint/return-await": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
     "unused-imports/no-unused-vars": [
       "warn",
       {
