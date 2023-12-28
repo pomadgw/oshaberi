@@ -2,6 +2,7 @@ import { ChatOpenAI } from 'langchain/chat_models/openai'
 import { type BaseChatModel } from 'langchain/chat_models/base'
 import { ChatOllama } from 'langchain/chat_models/ollama'
 import OpenAI from 'openai'
+
 import { type OshaberiValidLLMProvider } from './types'
 import { OllamaTagSchema } from './types/ollama'
 
@@ -15,6 +16,7 @@ interface LLMProvider {
 
 class OpenAIProvider implements LLMProvider {
   private readonly openai = new ChatOpenAI()
+  private models: string[] = []
 
   setTemperature(temperature: number): void {
     this.openai.temperature = temperature
@@ -25,13 +27,17 @@ class OpenAIProvider implements LLMProvider {
   }
 
   async getModelLists(): Promise<string[]> {
-    const openAiInstance = new OpenAI({
-      apiKey: this.openai.openAIApiKey
-    })
+    if (this.models.length === 0) {
+      const openAiInstance = new OpenAI({
+        apiKey: this.openai.openAIApiKey
+      })
 
-    const list = await openAiInstance.models.list()
+      const list = await openAiInstance.models.list()
 
-    return list.data.map((e) => e.id).filter((e) => e.includes('gpt'))
+      this.models = list.data.map((e) => e.id).filter((e) => e.includes('gpt'))
+    }
+
+    return this.models
   }
 
   getModel(): BaseChatModel {
@@ -41,6 +47,7 @@ class OpenAIProvider implements LLMProvider {
 
 class OllamaProvider implements LLMProvider {
   private readonly ollama: ChatOllama
+  private models: string[] = []
 
   constructor(address: string = 'http://localhost:11434', model: string = 'llama') {
     this.ollama = new ChatOllama({
@@ -58,12 +65,16 @@ class OllamaProvider implements LLMProvider {
   }
 
   async getModelLists(): Promise<string[]> {
-    const path = new URL('/api/tags', this.ollama.baseUrl)
+    if (this.models.length === 0) {
+      const path = new URL('/api/tags', this.ollama.baseUrl)
 
-    const data = await (await fetch(path.toString())).json()
-    const list = OllamaTagSchema.parse(data)
+      const data = await (await fetch(path.toString())).json()
+      const list = OllamaTagSchema.parse(data)
 
-    return list.models.map((e) => e.name)
+      this.models = list.models.map((e) => e.name)
+    }
+
+    return this.models
   }
 
   getModel(): BaseChatModel {

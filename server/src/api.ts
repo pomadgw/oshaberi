@@ -2,10 +2,7 @@ import { Hono } from 'hono'
 import { AIMessage, type BaseMessage, HumanMessage, SystemMessage } from 'langchain/schema'
 import { ZodError } from 'zod'
 
-import {
-  OshaberiChatParameterSchema,
-  OshaberiValidLLMProviderSchema
-} from './types'
+import { OshaberiChatParameterSchema, OshaberiValidLLMProviderSchema } from './types'
 import logger from './logger'
 import { providers } from './providers'
 
@@ -41,8 +38,15 @@ api.post('/chat', async (c) => {
   const body = OshaberiChatParameterSchema.parse(await c.req.json())
   const llmProvider = providers[body.provider]
 
-  llmProvider.setModel(body.model)
   llmProvider.setTemperature(body.temperature)
+
+  const modelList = await llmProvider.getModelLists()
+
+  if (!modelList.includes(body.model)) {
+    throw new Error('Invalid model')
+  }
+
+  llmProvider.setModel(body.model)
 
   let messages: BaseMessage[] = []
 
