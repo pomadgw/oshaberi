@@ -42,7 +42,7 @@ class OpenAIProvider implements LLMProvider {
 
     const list = await openAiInstance.models.list()
 
-    return list.data.map((e) => e.id)
+    return list.data.map((e) => e.id).filter((e) => e.includes('gpt'))
   }
 
   getModel(): BaseChatModel {
