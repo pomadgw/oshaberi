@@ -58,4 +58,6 @@ export type OshaberiSummarizeParameter = z.infer<typeof OshaberiSummarizeParamet
 export const OshaberiChatOverDocumentParameterSchema = OshaberiChatParameterSchema.extend({
   document: LoaderSchema
 })
-export type OshaberiChatOverDocumentParameter = z.infer<typeof OshaberiChatOverDocumentParameterSchema>
+export type OshaberiChatOverDocumentParameter = z.infer<
+  typeof OshaberiChatOverDocumentParameterSchema
+>
