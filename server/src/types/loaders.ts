@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const WebLoaderSchema = z.object({
   url: z.string().url(),
+  selector: z.string().default('body'),
   type: z.literal('web')
 })
 
