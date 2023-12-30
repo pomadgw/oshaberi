@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { AIMessage, type BaseMessage, HumanMessage, SystemMessage } from 'langchain/schema'
+import { HumanMessage, SystemMessage } from 'langchain/schema'
 import { ZodError } from 'zod'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { loadSummarizationChain } from 'langchain/chains'
@@ -16,6 +16,7 @@ import logger from './logger'
 import { providers } from './providers'
 import { createLoader } from './lib/loaders'
 import { createVectorStore } from './lib/store'
+import { toLangChainMessages } from './lib/message'
 
 const api = new Hono()
 
@@ -59,33 +60,8 @@ api.post('/chat', async (c) => {
 
   llmProvider.setModel(body.model)
 
-  let messages: BaseMessage[] = []
-
-  for (const m of body.messages) {
-    if (m.role === 'user') {
-      messages.push(
-        new HumanMessage({
-          content: m.content
-        })
-      )
-    } else if (m.role === 'assistant') {
-      messages.push(
-        new AIMessage({
-          content: m.content
-        })
-      )
-    } else {
-      messages = [
-        new SystemMessage({
-          content: m.content
-        }),
-        ...messages
-      ]
-    }
-  }
-
   logger.info({ body })
-  const result = await llmProvider.getModel().predictMessages(messages)
+  const result = await llmProvider.getModel().predictMessages(toLangChainMessages(body.messages))
 
   c.status(200)
 
@@ -166,30 +142,7 @@ api.post('/document/chat', async (c) => {
   const vectorStore = await createVectorStore(splitDocuments, body.provider)
   const retriever = vectorStore.asRetriever()
 
-  let messages: BaseMessage[] = []
-
-  for (const m of body.messages) {
-    if (m.role === 'user') {
-      messages.push(
-        new HumanMessage({
-          content: m.content
-        })
-      )
-    } else if (m.role === 'assistant') {
-      messages.push(
-        new AIMessage({
-          content: m.content
-        })
-      )
-    } else {
-      messages = [
-        new SystemMessage({
-          content: m.content
-        }),
-        ...messages
-      ]
-    }
-  }
+  const messages = toLangChainMessages(body.messages)
 
   // create a standalone question
   const lastMessage = messages[body.messages.length - 1]
