@@ -161,6 +161,8 @@ FOLLOWUP QUESTION: {question}
     .getModel()
     .predictMessages([...restOfMessages, ...question])
 
+  logger.info('Fetch the relevant documents', { question: actualQuestion })
+
   const relevantDocuments = await retriever.getRelevantDocuments(actualQuestion.toString())
   const serialized = formatDocumentsAsString(relevantDocuments)
 
