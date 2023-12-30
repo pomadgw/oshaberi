@@ -15,7 +15,7 @@ module.exports = {
     "@typescript-eslint/return-await": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "unused-imports/no-unused-vars": [
-      "warn",
+      "error",
       {
         "vars": "all",
         "varsIgnorePattern": "^_",
