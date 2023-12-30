@@ -111,6 +111,23 @@ api.post('/summarize', async (c) => {
   })
 })
 
+api.post('/document/upload', async (c) => {
+  const data = await c.req.parseBody()
+
+  const file = data.file
+
+  if (file instanceof File) {
+    logger.info('Uploading file', { name: file.name, service: 'oshaberi-service-api' })
+
+    // write to file with path <root>/uploaded/<filename>
+    await Bun.write(`uploaded/${file.name}`, await file.arrayBuffer())
+  }
+
+  return c.json({
+    message: 'ok'
+  })
+})
+
 api.post('/document/chat', async (c) => {
   const body = OshaberiChatOverDocumentParameterSchema.parse(await c.req.json())
 
