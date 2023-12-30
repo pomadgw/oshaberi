@@ -2,6 +2,8 @@
 
 import { z } from 'zod'
 
+import { LoaderSchema } from './loaders'
+
 const BaseMessage = z.object({
   content: z.string()
 })
@@ -47,3 +49,13 @@ export const OshaberiChatParameterSchema = OshaberiLLMParameterSchema.extend({
   messages: z.array(MessageSchema)
 })
 export type OshaberiChatParameter = z.infer<typeof OshaberiChatParameterSchema>
+
+export const OshaberiSummarizeParameterSchema = OshaberiLLMParameterSchema.extend({
+  document: LoaderSchema
+})
+export type OshaberiSummarizeParameter = z.infer<typeof OshaberiSummarizeParameterSchema>
+
+export const OshaberiChatOverDocumentParameterSchema = OshaberiChatParameterSchema.extend({
+  document: LoaderSchema
+})
+export type OshaberiChatOverDocumentParameter = z.infer<typeof OshaberiChatOverDocumentParameterSchema>
