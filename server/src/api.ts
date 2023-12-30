@@ -130,7 +130,7 @@ api.post('/summarize', async (c) => {
   c.status(200)
 
   return c.json({
-    content: res.text,
+    content: res.output_text,
     role: 'assistant'
   })
 })
