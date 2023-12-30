@@ -49,7 +49,10 @@ class OllamaProvider implements LLMProvider {
   private readonly ollama: ChatOllama
   private models: string[] = []
 
-  constructor(address: string = 'http://localhost:11434', model: string = 'llama') {
+  constructor(
+    address: string = process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434',
+    model: string = 'llama'
+  ) {
     this.ollama = new ChatOllama({
       baseUrl: address,
       model
