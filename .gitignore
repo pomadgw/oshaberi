@@ -32,3 +32,4 @@ dist-ssr
 
 uploaded/*
 !uploaded/.gitkeep
+cache/
