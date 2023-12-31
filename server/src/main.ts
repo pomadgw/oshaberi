@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 
 import logger from './logger'
 import setAPIRoutes from './api'
+import { attachHome } from './vite'
 
 const app = new Hono()
 
@@ -34,9 +35,8 @@ app.use('*', async (c, next) => {
   })
 })
 
-app.get('/', (c) => c.text('Hono!'))
-
 setAPIRoutes(app)
+await attachHome(app)
 
 const server = Bun.serve({
   fetch: app.fetch,
