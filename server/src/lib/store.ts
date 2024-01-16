@@ -4,19 +4,20 @@ import { Redis } from 'ioredis'
 import { CacheBackedEmbeddings } from 'langchain/embeddings/cache_backed'
 import { RedisByteStore } from 'langchain/storage/ioredis'
 
-import { type OshaberiValidLLMProvider } from '../types'
+import { type OshaberiValidEmbeddingProvider, type OshaberiValidLLMProvider } from '../types'
 
 const redisClient = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379')
 const redisStore = new RedisByteStore({
   client: redisClient
 })
 
-const cacheBackedEmbeddings: Record<OshaberiValidLLMProvider, CacheBackedEmbeddings | null> = {
-  openai: null,
-  ollama: null
-}
+const cacheBackedEmbeddings: Record<OshaberiValidEmbeddingProvider, CacheBackedEmbeddings | null> =
+  {
+    openai: null,
+    ollama: null
+  }
 
-const getEmbeddingClass = async (provider: OshaberiValidLLMProvider) => {
+const getEmbeddingClass = async (provider: OshaberiValidEmbeddingProvider) => {
   if (provider === 'openai') {
     const { OpenAIEmbeddings } = await import('langchain/embeddings/openai')
     if (cacheBackedEmbeddings[provider] == null) {

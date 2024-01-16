@@ -33,6 +33,13 @@ export type Message = z.infer<typeof MessageSchema>
 export const OshaberiValidLLMProviderSchema = z.enum(['openai', 'ollama'])
 export type OshaberiValidLLMProvider = z.infer<typeof OshaberiValidLLMProviderSchema>
 
+export const OshaberiValidEmbeddingProviderSchema = z.enum(['openai', 'ollama'])
+export type OshaberiValidEmbeddingProvider = z.infer<typeof OshaberiValidEmbeddingProviderSchema>
+
+export const EmbeddingSchema = z.object({
+  embedding_provider: OshaberiValidEmbeddingProviderSchema
+})
+
 export const OshaberiListModelParameterSchema = z.object({
   provider: OshaberiValidLLMProviderSchema
 })
@@ -56,6 +63,7 @@ export const OshaberiSummarizeParameterSchema = OshaberiLLMParameterSchema.exten
 export type OshaberiSummarizeParameter = z.infer<typeof OshaberiSummarizeParameterSchema>
 
 export const OshaberiChatOverDocumentParameterSchema = OshaberiChatParameterSchema.extend({
+  embedding_provider: OshaberiValidEmbeddingProviderSchema,
   document: LoaderSchema
 })
 export type OshaberiChatOverDocumentParameter = z.infer<

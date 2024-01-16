@@ -156,7 +156,7 @@ api.post('/document/chat', async (c) => {
   const splitDocuments = await splitter.splitDocuments(docs)
 
   logger.info('Creating the vector store')
-  const vectorStore = await createVectorStore(splitDocuments, body.provider)
+  const vectorStore = await createVectorStore(splitDocuments, body.embedding_provider)
   const retriever = vectorStore.asRetriever()
 
   const messages = toLangChainMessages(body.messages)
