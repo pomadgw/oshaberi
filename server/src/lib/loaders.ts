@@ -14,6 +14,24 @@ export async function createLoader(loader: Loader): Promise<DocumentLoader> {
     return YoutubeLoader.createFromUrl(loader.url.toString(), {
       language: loader.language ?? 'en'
     })
+  } else if (loader.type === 'pdf') {
+    const { PDFLoader } = await import('langchain/document_loaders/fs/pdf')
+
+    if (loader.path.type === 'path') {
+      return new PDFLoader(`uploaded/${loader.path.path}`, {
+        splitPages: loader.splitPages
+      })
+    }
+
+    const content = await fetch(loader.path.url).then(async (r) => r.arrayBuffer())
+    // save to file
+    const filename = `pdf-${Date.now()}.pdf`
+    const path = `/tmp/${filename}`
+    await Bun.write(path, content)
+
+    return new PDFLoader(path, {
+      splitPages: loader.splitPages
+    })
   }
 
   throw new Error('Invalid loader type')
