@@ -1,3 +1,4 @@
+import { Glob } from 'bun'
 import { Hono } from 'hono'
 import { HumanMessage, SystemMessage } from 'langchain/schema'
 import { ZodError } from 'zod'
@@ -125,6 +126,15 @@ api.post('/document/upload', async (c) => {
 
   return c.json({
     message: 'ok'
+  })
+})
+
+api.get('/document/list', async (c) => {
+  const glob = new Glob('*')
+  const files = [...glob.scanSync('uploaded')]
+
+  return c.json({
+    files
   })
 })
 
