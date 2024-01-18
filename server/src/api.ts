@@ -144,16 +144,19 @@ api.post('/document/chat', async (c) => {
   llmProvider.setModel(body.model)
 
   logger.info('Loading the document')
-  const loader = await createLoader(body.document)
-
-  const docs = await loader.load()
+  const docs = await Promise.all(
+    body.documents.map(async (document) => {
+      const loader = await createLoader(document)
+      return loader.load()
+    })
+  )
 
   const splitter = new RecursiveCharacterTextSplitter({
     chunkOverlap: 0,
     chunkSize: 500
   })
 
-  const splitDocuments = await splitter.splitDocuments(docs)
+  const splitDocuments = await splitter.splitDocuments(docs.flat())
 
   logger.info('Creating the vector store')
   const vectorStore = await createVectorStore(splitDocuments, body.embedding_provider)

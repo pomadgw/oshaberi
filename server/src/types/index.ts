@@ -64,7 +64,7 @@ export type OshaberiSummarizeParameter = z.infer<typeof OshaberiSummarizeParamet
 
 export const OshaberiChatOverDocumentParameterSchema = OshaberiChatParameterSchema.extend({
   embedding_provider: OshaberiValidEmbeddingProviderSchema,
-  document: LoaderSchema
+  documents: z.array(LoaderSchema)
 })
 export type OshaberiChatOverDocumentParameter = z.infer<
   typeof OshaberiChatOverDocumentParameterSchema
